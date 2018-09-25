@@ -20,6 +20,7 @@ public class SquareItem {
         this.height = height;
         texture = new Texture("green_rock.png");
         this.position = position;
+
     }
 
     public void   render (SpriteBatch batch) {
