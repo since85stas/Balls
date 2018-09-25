@@ -1,6 +1,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +20,8 @@ public class GameField {
     private int fieldDimension = 9 ;
 
     private SquareItem[][] squares ;
+
+    public float gameTime;
 
     public GameField (GameScreen gameScreen ){
         this.gameScreen = gameScreen;
@@ -45,8 +49,39 @@ public class GameField {
 
         for (int i = 0; i < fieldDimension ; i++) {
             for (int j = 0; j < fieldDimension; j++) {
-                //squares[i][j].render(batch);
+                squares[i][j].render(batch);
             }
         }
+    }
+
+    public void update( float dt) {
+
+        // время игры
+        gameTime += dt;
+
+        for (int i = 0; i < fieldDimension ; i++) {
+            for (int j = 0; j < fieldDimension; j++) {
+                squares[i][j].update(dt);
+            }
+        }
+
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (button == Input.Buttons.LEFT) {
+                    // do something
+                    for (int i = 0; i < fieldDimension ; i++) {
+                        for (int j = 0; j < fieldDimension; j++) {
+
+                            //проверяем попал ли щелчок в ячейку и помещяем туда шарик
+                            if (squares[i][j].hitBox.contains(screenX,Gdx.graphics.getHeight() - screenY)) {
+                                squares[i][j].setHasBall(true);
+                            }
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }

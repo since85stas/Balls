@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
     }
 
     public void update (float dt) {
-        //player.update(dt);
+        gameField.update(dt);
     }
 	
 	@Override
