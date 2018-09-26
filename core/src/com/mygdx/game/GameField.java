@@ -5,7 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GameField {
     private GameScreen gameScreen;
@@ -16,10 +20,15 @@ public class GameField {
      // item dimensions
     private int itemWidth;
 
-
+    // game parameters
     private int fieldDimension = 9 ;
+    private int numberOfAiBalls = 3;
+    private int numberOfColors  = 4;
 
+    // массив с ячейками
     private SquareItem[][] squares ;
+
+    private boolean isAiTurn;
 
     public float gameTime;
 
@@ -40,6 +49,7 @@ public class GameField {
                 int y = i*itemWidth;
                 Vector2 position = new Vector2(x,y);
                 squares[j][i] = new SquareItem(gameScreen,itemWidth,itemWidth,position);
+
             }
         }
     }
@@ -74,7 +84,7 @@ public class GameField {
 
                             //проверяем попал ли щелчок в ячейку и помещяем туда шарик
                             if (squares[i][j].hitBox.contains(screenX,Gdx.graphics.getHeight() - screenY)) {
-                                squares[i][j].setHasBall(true);
+                               aiTurn();
                             }
                         }
                     }
@@ -83,5 +93,42 @@ public class GameField {
                 return false;
             }
         });
+    }
+
+    /* компьютер выбирает шарики и кладет их в рандомные ячейки
+       пока сделано для 3 шариков
+     */
+    public void aiTurn () {
+
+        Vector2[] freeSquares = checkSquares();
+        for (int i = 0; i < numberOfAiBalls ; i++) {
+            int random = MathUtils.random(0,freeSquares.length-1);
+
+            squares[(int)freeSquares[random].x][(int)freeSquares[random].y]
+                    .setBallColor(MathUtils.random(0,numberOfColors-1));
+            squares[(int)freeSquares[random].x][(int)freeSquares[random].y]
+                    .setHasBall(true);
+
+        }
+
+    }
+
+    /* проверяем из всех ячеек где нет шариковб получаем список таких ячеек в виде String[]
+
+     */
+    public Vector2[] checkSquares () {
+        ArrayList<Vector2> freeSquares= new ArrayList<>();
+
+        // проверяем все ячейки
+        for (int i = 0; i < fieldDimension ; i++) {
+            for (int j = 0; j < fieldDimension; j++)
+                if (squares[i][j].isHasBall() == false) {
+                    freeSquares.add(new Vector2(i,j));
+                }
+        }
+
+        // отдаем массив из свободных ячеек
+        Vector2[] freeOut = freeSquares.toArray(new Vector2[freeSquares.size()]);
+        return freeOut;
     }
 }
