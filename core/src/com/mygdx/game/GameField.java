@@ -24,11 +24,17 @@ public class GameField {
     private int fieldDimension = 9 ;
     private int numberOfAiBalls = 3;
     private int numberOfColors  = 4;
+    private int numberOfTurns;
+    private int gameScore;
+
+    // turnParameters
+    private boolean isBallSelected = false;
+    private Vector2 selectedBall;
 
     // массив с ячейками
     private SquareItem[][] squares ;
 
-    private boolean isAiTurn;
+    private static boolean isAiTurn;
 
     public float gameTime;
 
@@ -52,6 +58,24 @@ public class GameField {
 
             }
         }
+
+        aiTurn();
+        //addFakeBalls(3,0,0,0);
+
+//        CheckBallLines check = new CheckBallLines(squares);
+//        boolean hasLine = check.startCheck();
+//        if(hasLine) {
+//            deleteBalls(check.getBallsInLine());
+//        }
+    }
+
+    private void deleteBalls (Vector2[] balls) {
+
+        for (int i = 0; i < balls.length ; i++) {
+
+            squares[(int)balls[i].x][(int)balls[i].y].setHasBall(false);
+            squares[(int)balls[i].x][(int)balls[i].y].setActive(false);
+        }
     }
 
     public void   render (SpriteBatch batch) {
@@ -62,6 +86,8 @@ public class GameField {
                 squares[i][j].render(batch);
             }
         }
+
+
     }
 
     public void update( float dt) {
@@ -69,22 +95,49 @@ public class GameField {
         // время игры
         gameTime += dt;
 
-        for (int i = 0; i < fieldDimension ; i++) {
-            for (int j = 0; j < fieldDimension; j++) {
-                squares[i][j].update(dt);
-            }
+        if(isBallSelected && selectedBall!=null) {
+            squares[(int)selectedBall.x][(int)selectedBall.y].update(dt);
         }
 
         Gdx.input.setInputProcessor(new InputAdapter() {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                Vector2 clickPosition = null;
                 if (button == Input.Buttons.LEFT) {
                     // do something
-                    for (int i = 0; i < fieldDimension ; i++) {
-                        for (int j = 0; j < fieldDimension; j++) {
+                    if (isBallSelected ) {
+                        clickPosition = checkClickEvent(screenX,screenY);
+                        if (clickPosition.equals(selectedBall)) {
+                            squares[(int)clickPosition.x][(int)clickPosition.y].setActive(false);
+                            squares[(int)clickPosition.x][(int)clickPosition.y].setBallInCenter();
+                            isBallSelected = false;
+                            selectedBall = null;
+                        } else {
+                            // получаем информацию из выбранного шара и убераем его
+                            int color = squares[(int)selectedBall.x][(int)selectedBall.y].getBallColor();
+                            squares[(int)selectedBall.x][(int)selectedBall.y].setHasBall(false);
+                            squares[(int)selectedBall.x][(int)selectedBall.y].setActive(false);
 
-                            //проверяем попал ли щелчок в ячейку и помещяем туда шарик
-                            if (squares[i][j].hitBox.contains(screenX,Gdx.graphics.getHeight() - screenY)) {
-                               aiTurn();
+                            // переносим в другую ячейку
+                            squares[(int)clickPosition.x][(int)clickPosition.y].setHasBall(true);
+                            squares[(int)clickPosition.x][(int)clickPosition.y].setBallColor(color);
+                            isBallSelected = false;
+                            selectedBall   = null ;
+                            CheckBallLines check = new CheckBallLines(squares);
+                            boolean hasLine = check.startCheck();
+                            if(hasLine) {
+                                deleteBalls(check.getBallsInLine());
+                            }
+
+                            aiTurn();
+                        }
+                    }  else if (!isBallSelected){
+                        clickPosition = checkClickEvent(screenX,screenY);
+                        if (clickPosition != null) {
+                            if (squares[(int)clickPosition.x][(int)clickPosition.y].isHasBall()) {
+                                squares[(int)clickPosition.x][(int)clickPosition.y].setActive(true);
+                                squares[(int)clickPosition.x][(int)clickPosition.y].update(dt);
+                                isBallSelected = true;
+                                selectedBall = clickPosition;
                             }
                         }
                     }
@@ -95,25 +148,52 @@ public class GameField {
         });
     }
 
+    public Vector2 checkClickEvent(int screenX, int screenY) {
+        Vector2 clickPosition = null;
+        for (int i = 0; i < fieldDimension; i++) {
+            for (int j = 0; j < fieldDimension; j++) {
+
+                //проверяем попал ли щелчок в ячейку и помещяем туда шарик
+                if (squares[i][j].hitBox.contains(screenX, Gdx.graphics.getHeight() - screenY)) {
+                    clickPosition = new Vector2(i,j);
+//                    aiTurn();
+                }
+                //squares[i][j].update(dt);
+            }
+        }
+        return clickPosition;
+
+    }
+
+
+    public void selectBall ( Vector2 position) {
+
+    }
+
     /* компьютер выбирает шарики и кладет их в рандомные ячейки
        пока сделано для 3 шариков
      */
     public void aiTurn () {
 
-        Vector2[] freeSquares = checkSquares();
         for (int i = 0; i < numberOfAiBalls ; i++) {
+            Vector2[] freeSquares = checkSquares();
             int random = MathUtils.random(0,freeSquares.length-1);
 
             squares[(int)freeSquares[random].x][(int)freeSquares[random].y]
                     .setBallColor(MathUtils.random(0,numberOfColors-1));
             squares[(int)freeSquares[random].x][(int)freeSquares[random].y]
                     .setHasBall(true);
-
         }
+    }
+
+    /*
+        Игрок по щелчку выбирает шарик с которым взаимодействовать
+     */
+    public void playerTurn() {
 
     }
 
-    /* проверяем из всех ячеек где нет шариковб получаем список таких ячеек в виде String[]
+    /*  проверяем из всех ячеек где нет шариковб получаем список таких ячеек в виде String[]
 
      */
     public Vector2[] checkSquares () {
@@ -130,5 +210,18 @@ public class GameField {
         // отдаем массив из свободных ячеек
         Vector2[] freeOut = freeSquares.toArray(new Vector2[freeSquares.size()]);
         return freeOut;
+    }
+
+    private void addFakeBalls(int number, int color, int positX, int positY ) {
+
+        for (int i = 0; i < number ; i++) {
+            //Vector2[] freeSquares = checkSquares();
+            //int random = MathUtils.random(0,freeSquares.length-1);
+
+            squares[positX][positY+i]
+                    .setBallColor(color);
+            squares[positX][positY+i]
+                    .setHasBall(true);
+        }
     }
 }

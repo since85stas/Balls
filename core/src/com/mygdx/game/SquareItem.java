@@ -20,7 +20,10 @@ public class SquareItem {
 
     // ball parameters
     private boolean hasBall  = false;
-    private boolean isActive = true;
+
+
+
+    private boolean isActive = false;
     private float ballOfSquare = 0.7f;
     private float ballactiveTime ;
 
@@ -42,7 +45,7 @@ public class SquareItem {
         this.gameScreen = gameScreen;
         this.width = width;
         this.height = height;
-        textureSquare = new Texture("green_rock.png");
+        textureSquare = new Texture("mini_brown_rock.png");
         this.position = position;
         this.hitBox = new Rectangle(position.x,position.y,width,height);
         float ballPositionDel = (width - width*ballOfSquare)/2;
@@ -71,7 +74,7 @@ public class SquareItem {
     public void changeBallPosition ( float dt ) {
         ballactiveTime += dt;
 
-        if ( ballPosition.y <= position.y && !stopCollision ) {
+        if ( ballPosition.y - position.y <= 0 && !stopCollision ) {
             if (  Math.abs(ballDeformation) >= height*ballDeformationRatio) {
                 ballVelocity = ballVelocity*(-1);
                 ballDeformationVelocity = ballDeformationVelocity*(-1);
@@ -82,7 +85,7 @@ public class SquareItem {
             ballPosition.y = position.y;
             ballDeformation -= ballDeformationVelocity*height;
 //            System.out.println("ooops");
-        } else if  ( ballPosition.y + height*ballOfSquare > height - height*upperWallOffset ) {
+        } else if  ( ballPosition.y + height*ballOfSquare - position.y > height - height*upperWallOffset ) {
             ballVelocity = ballVelocity*(-1);
             ballDeformationVelocity = ballDeformationVelocity*(-1);
             ballPosition.y = ballPosition.y -(width*ballVelocity);
@@ -91,6 +94,11 @@ public class SquareItem {
         } else {
             ballPosition.y = ballPosition.y -(width*ballVelocity);
         }
+    }
+
+    public void setBallInCenter () {
+        float ballPositionDel = (width - width*ballOfSquare)/2;
+        ballPosition = new  Vector2(position.x + ballPositionDel,position.y + ballPositionDel);
     }
 
     public Texture drawBall (int ballColor) {
@@ -102,16 +110,16 @@ public class SquareItem {
         String textureName = null;
         switch (colorId) {
             case 0:
-                textureName = "sphere_blue.png";
+                textureName = "mini_sphere_blue.png";
                 break;
             case 1:
-                textureName = "sphere_green.png";
+                textureName = "mini_sphere_green.png";
                 break;
             case 2:
-                textureName = "sphere_purple.png";
+                textureName = "mini_sphere_purle.png";
                 break;
             case 3:
-                textureName = "sphere_yellow.png";
+                textureName = "mini_sphere_yellow.png";
                 break;
         }
         return textureName;
@@ -131,5 +139,9 @@ public class SquareItem {
 
     public void setBallColor(int ballColor) {
         this.ballColor = ballColor;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

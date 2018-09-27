@@ -34,8 +34,6 @@ public class GameScreen implements Screen {
         batch.begin();
 
 
-
-
         gameField.render(batch);
         //batch.draw();
 //        batch.begin();
