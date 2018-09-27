@@ -12,6 +12,7 @@ public class CheckBallLines {
     int SIZE_X ;
     int SIZE_WIN =3; //кол-во заполненных подряд полей для победы
     char[][] fieldg;
+    int colors;
 
     int finalBallXindx;
     int finalBallYindx;
@@ -24,9 +25,10 @@ public class CheckBallLines {
 
     final char EMPTY_DOT= '.';
 
-    CheckBallLines(SquareItem[][] squares  ) {
+    CheckBallLines(SquareItem[][] squares, int colors  ) {
 
         this.squares = squares;
+        this.colors = colors;
 
         SIZE_Y = squares.length;
         SIZE_X = squares.length;
@@ -43,14 +45,17 @@ public class CheckBallLines {
             }
         }
 
-
-
-
     }
 
     public boolean startCheck ( ) {
+        boolean win = false;
 
-        boolean win = checkWin('0');
+        for (int i =    0; i < colors ; i++) {
+            char check = Character.forDigit(i,10);
+            win = checkWin(check);
+            if (win) return win;
+        }
+
         System.out.println();
         return win;
 
@@ -109,15 +114,21 @@ public class CheckBallLines {
 
     private int checkLineHorisont(int v, int h, char dot) {
         int count=0;
-        for (int j = h; j < SIZE_WIN + h; j++) {
+        int cycleValue = SIZE_WIN;
+        for (int j = h; j < cycleValue + h; j++) {
             if ((fieldg[v][j] == dot)) {
                 count++;
                 if (count >= SIZE_WIN) {
                     finalBallXindx = h;
                     finalBallYindx = j;
-                    ballsInLine = new Vector2[SIZE_WIN];
-                    for (int n = 0; n < SIZE_WIN ; n++) {
+                    ballsInLine = new Vector2[count];
+                    for (int n = 0; n < count ; n++) {
                         ballsInLine[n] = new Vector2(finalBallXindx,finalBallYindx-n);
+                    }
+
+                    //проверка на большее чем SIZE_WIN количество шариков
+                    if (j != SIZE_Y -1) {
+                        cycleValue++;
                     }
                 }
             }
@@ -133,8 +144,8 @@ public class CheckBallLines {
             if (count >= SIZE_WIN) {
                 finalBallXindx = i;
                 finalBallYindx = h;
-                ballsInLine = new Vector2[SIZE_WIN];
-                for (int n = 0; n < SIZE_WIN ; n++) {
+                ballsInLine = new Vector2[count];
+                for (int n = 0; n < count ; n++) {
                     ballsInLine[n] = new Vector2(finalBallXindx-n,finalBallYindx);
                 }
             }

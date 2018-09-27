@@ -23,7 +23,7 @@ public class GameField {
     // game parameters
     private int fieldDimension = 9 ;
     private int numberOfAiBalls = 3;
-    private int numberOfColors  = 4;
+    public  int numberOfColors  = 4;
     private int numberOfTurns;
     private int gameScore;
 
@@ -112,6 +112,7 @@ public class GameField {
                             isBallSelected = false;
                             selectedBall = null;
                         } else {
+
                             // получаем информацию из выбранного шара и убераем его
                             int color = squares[(int)selectedBall.x][(int)selectedBall.y].getBallColor();
                             squares[(int)selectedBall.x][(int)selectedBall.y].setHasBall(false);
@@ -122,7 +123,7 @@ public class GameField {
                             squares[(int)clickPosition.x][(int)clickPosition.y].setBallColor(color);
                             isBallSelected = false;
                             selectedBall   = null ;
-                            CheckBallLines check = new CheckBallLines(squares);
+                            CheckBallLines check = new CheckBallLines(squares,numberOfColors);
                             boolean hasLine = check.startCheck();
                             if(hasLine) {
                                 deleteBalls(check.getBallsInLine());
