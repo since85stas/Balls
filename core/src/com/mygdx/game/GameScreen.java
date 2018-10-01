@@ -33,18 +33,8 @@ public class GameScreen implements Screen {
 
         batch.begin();
 
-
         gameField.render(batch);
-        //batch.draw();
-//        batch.begin();
-//        batch.draw(background,0,0);
-//        for (int i=0;i<8;i++) {
-//            batch.draw(ground, i*200.f-player.getPosition().x%200.f, 0);
-//        }
-//        player.render(batch);
-//        for (int i =0 ; i<enemies.length;i++) {
-//            enemies[i].render(batch,player.getPosition().x - getPlayerAnchor());
-//        }
+
        batch.end();
     }
 

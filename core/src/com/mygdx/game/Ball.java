@@ -15,7 +15,7 @@ public class Ball {
 
     public Ball (GameScreen gameScreen){
         this.gameScreen = gameScreen;
-        texture = new Texture("sphere_blue.png");
+        //texture = new Texture("sphere_blue.png");
         this.position = new Vector2(0,0);
     }
 

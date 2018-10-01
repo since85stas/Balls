@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameField {
+    private static final  String TAG = GameField.class.getName();
+
     private GameScreen gameScreen;
     private Texture texture;
 
@@ -41,9 +44,8 @@ public class GameField {
     public GameField (GameScreen gameScreen ){
         this.gameScreen = gameScreen;
 
-        texture = new Texture("bg.png");
-
-        //this.position = new Vector2(0,0);
+        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         int screenWidth = Gdx.graphics.getWidth();
 
         itemWidth = (int)screenWidth/ fieldDimension;
@@ -55,18 +57,12 @@ public class GameField {
                 int y = i*itemWidth;
                 Vector2 position = new Vector2(x,y);
                 squares[j][i] = new SquareItem(gameScreen,itemWidth,itemWidth,position);
-
             }
         }
 
         aiTurn();
         //addFakeBalls(3,0,0,0);
 
-//        CheckBallLines check = new CheckBallLines(squares);
-//        boolean hasLine = check.startCheck();
-//        if(hasLine) {
-//            deleteBalls(check.getBallsInLine());
-//        }
     }
 
     private void deleteBalls (Vector2[] balls) {
@@ -79,7 +75,7 @@ public class GameField {
     }
 
     public void   render (SpriteBatch batch) {
-        batch.draw(texture,0,0);
+        //batch.draw(texture,0,0);
 
         for (int i = 0; i < fieldDimension ; i++) {
             for (int j = 0; j < fieldDimension; j++) {
@@ -125,7 +121,7 @@ public class GameField {
                             selectedBall   = null ;
                             CheckBallLines check = new CheckBallLines(squares,numberOfColors);
                             boolean hasLine = check.startCheck();
-                            if(hasLine) {
+                            if(hasLine && check.getBallsInLine() != null) {
                                 deleteBalls(check.getBallsInLine());
                             }
 
