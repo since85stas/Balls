@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.util.Constants;
 
 public class SquareItem {
     private GameScreen gameScreen;
@@ -20,23 +21,15 @@ public class SquareItem {
 
     // ball parameters
     private boolean hasBall  = false;
-
-
-
     private boolean isActive = false;
-    private float ballOfSquare = 0.7f;
     private float ballactiveTime ;
-
-
+    private float ballVelocity = Constants.BALL_VELOCITY;
+    private float ballDeformationVelocity    = Constants.DEFORMATION_VELOCITY;
     private int   ballColor      ;
 
 
     // collision parameters
-    private float ballVelocity         = 0.01f ;
-    private float ballDeformationVelocity = 0.02f;
-    private float ballDeformationRatio = 0.1f;
     private float ballDeformation  ;
-    private float upperWallOffset = 0.1f;
     private boolean afterCollision = false;
     private boolean stopCollision = false;
 
@@ -45,13 +38,13 @@ public class SquareItem {
         this.gameScreen = gameScreen;
         this.width = width;
         this.height = height;
-        textureSquare = new Texture("mini_brown_rock.png");
+        textureSquare = new Texture("mini_mini_green_rock.png");
         this.position = position;
         this.hitBox = new Rectangle(position.x,position.y,width,height);
-        float ballPositionDel = (width - width*ballOfSquare)/2;
+        float ballPositionDel = (width - width*Constants.BALL_SIZE_RATIO)/2;
         ballPosition = new Vector2(position.x + ballPositionDel,position.y + ballPositionDel);
-    }
 
+    }
 
 
     public void   render (SpriteBatch batch) {
@@ -59,10 +52,14 @@ public class SquareItem {
         batch.draw(textureSquare,position.x,position.y,width,height);
 
         if (hasBall) {
-            batch.draw(drawBall(ballColor),ballPosition.x,ballPosition.y
-                    ,width*ballOfSquare,height*ballOfSquare + ballDeformation);
+            batch.draw(drawBall(ballColor)
+                    ,ballPosition.x
+                    ,ballPosition.y
+                    ,width*Constants.BALL_SIZE_RATIO
+                    ,height*Constants.BALL_SIZE_RATIO + ballDeformation);
         }
     }
+
 
     public void update(float dt) {
         if (isActive && hasBall)  {
@@ -75,7 +72,7 @@ public class SquareItem {
         ballactiveTime += dt;
 
         if ( ballPosition.y - position.y <= 0 && !stopCollision ) {
-            if (  Math.abs(ballDeformation) >= height*ballDeformationRatio) {
+            if (  Math.abs(ballDeformation) >= height*Constants.DEFORMATION_RATIO) {
                 ballVelocity = ballVelocity*(-1);
                 ballDeformationVelocity = ballDeformationVelocity*(-1);
                 afterCollision = true;
@@ -83,22 +80,24 @@ public class SquareItem {
                 stopCollision = true;
             }
             ballPosition.y = position.y;
-            ballDeformation -= ballDeformationVelocity*height;
+            ballDeformation -= ballDeformationVelocity*dt;
 //            System.out.println("ooops");
-        } else if  ( ballPosition.y + height*ballOfSquare - position.y > height - height*upperWallOffset ) {
+        } else if  ( ballPosition.y + height*Constants.BALL_SIZE_RATIO - position.y
+                > height - height*Constants.UPPER_OFFSET) {
             ballVelocity = ballVelocity*(-1);
             ballDeformationVelocity = ballDeformationVelocity*(-1);
-            ballPosition.y = ballPosition.y -(width*ballVelocity);
+            ballPosition.y = ballPosition.y -(ballVelocity)*dt;
             stopCollision = false;
             afterCollision = false;
         } else {
-            ballPosition.y = ballPosition.y -(width*ballVelocity);
+            ballPosition.y = ballPosition.y -(ballVelocity)*dt;
         }
     }
 
     public void setBallInCenter () {
-        float ballPositionDel = (width - width*ballOfSquare)/2;
-        ballPosition = new  Vector2(position.x + ballPositionDel,position.y + ballPositionDel);
+        float ballPositionDel = (width - width*Constants.BALL_SIZE_RATIO)/2;
+        ballPosition.x  =  position.x + ballPositionDel;
+        ballPosition.y  =  position.y + ballPositionDel;
     }
 
     public Texture drawBall (int ballColor) {
@@ -110,16 +109,16 @@ public class SquareItem {
         String textureName = null;
         switch (colorId) {
             case 0:
-                textureName = "mini_sphere_blue.png";
+                textureName = "mini_mini_mini_sphere_blue.png";
                 break;
             case 1:
-                textureName = "mini_sphere_green.png";
+                textureName = "mini_mini_mini_sphere_green.png";
                 break;
             case 2:
-                textureName = "mini_sphere_purle.png";
+                textureName = "mini_mini_mini_sphere_purle.png";
                 break;
             case 3:
-                textureName = "mini_sphere_yellow.png";
+                textureName = "mini_mini_mini_sphere_yellow.png";
                 break;
         }
         return textureName;

@@ -8,9 +8,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.funcs.CheckBallLines;
+import com.mygdx.game.funcs.FindBallPath;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class GameField {
     private static final  String TAG = GameField.class.getName();
@@ -60,16 +61,24 @@ public class GameField {
             }
         }
 
-        aiTurn();
-        //addFakeBalls(3,0,0,0);
+        //aiTurn();
+        addFakeBalls(8,0,0,1,0);
+        addFakeBalls(8,0,1,1,0);
+        addFakeBalls(3,0,2,1,0);
+        addFakeBalls(4,0,2,5,0);
+        addFakeBalls(9,0,4,0,0);
+
+        FindBallPath finder = new FindBallPath(squares,
+                new Vector2(2,0),
+                new Vector2(3,4)) ;
 
     }
 
     private void deleteBalls (Vector2[] balls) {
 
         for (int i = 0; i < balls.length ; i++) {
-
             squares[(int)balls[i].x][(int)balls[i].y].setHasBall(false);
+            squares[(int)balls[i].x][(int)balls[i].y].setBallInCenter();
             squares[(int)balls[i].x][(int)balls[i].y].setActive(false);
         }
     }
@@ -79,7 +88,9 @@ public class GameField {
 
         for (int i = 0; i < fieldDimension ; i++) {
             for (int j = 0; j < fieldDimension; j++) {
-                squares[i][j].render(batch);
+                //if(isBallSelected && selectedBall!=null&& squares[i][j].isHasBall()) {
+                    squares[i][j].render(batch);
+                //}
             }
         }
 
@@ -103,16 +114,18 @@ public class GameField {
                     if (isBallSelected ) {
                         clickPosition = checkClickEvent(screenX,screenY);
                         if (clickPosition.equals(selectedBall)) {
-                            squares[(int)clickPosition.x][(int)clickPosition.y].setActive(false);
-                            squares[(int)clickPosition.x][(int)clickPosition.y].setBallInCenter();
+                            returnSquareInitState(clickPosition);
+
                             isBallSelected = false;
                             selectedBall = null;
                         } else {
 
                             // получаем информацию из выбранного шара и убераем его
                             int color = squares[(int)selectedBall.x][(int)selectedBall.y].getBallColor();
-                            squares[(int)selectedBall.x][(int)selectedBall.y].setHasBall(false);
-                            squares[(int)selectedBall.x][(int)selectedBall.y].setActive(false);
+                            returnSquareInitState(new Vector2(selectedBall));
+
+//                            squares[(int)selectedBall.x][(int)selectedBall.y].setHasBall(false);
+//                            squares[(int)selectedBall.x][(int)selectedBall.y].setActive(false);
 
                             // переносим в другую ячейку
                             squares[(int)clickPosition.x][(int)clickPosition.y].setHasBall(true);
@@ -159,12 +172,12 @@ public class GameField {
             }
         }
         return clickPosition;
-
     }
 
-
-    public void selectBall ( Vector2 position) {
-
+    private void returnSquareInitState(Vector2 click) {
+        squares[(int)click.x][(int)click.y].setActive(false);
+        squares[(int)click.x][(int)click.y].setHasBall(false);
+        squares[(int)click.x][(int)click.y].setBallInCenter();
     }
 
     /* компьютер выбирает шарики и кладет их в рандомные ячейки
@@ -209,16 +222,24 @@ public class GameField {
         return freeOut;
     }
 
-    private void addFakeBalls(int number, int color, int positX, int positY ) {
+    private void addFakeBalls(int number, int color, int positX, int positY, int direction ) {
 
-        for (int i = 0; i < number ; i++) {
-            //Vector2[] freeSquares = checkSquares();
-            //int random = MathUtils.random(0,freeSquares.length-1);
+        if (direction  ==0){
+            for (int i = 0; i < number; i++) {
 
-            squares[positX][positY+i]
-                    .setBallColor(color);
-            squares[positX][positY+i]
-                    .setHasBall(true);
+                squares[positX][positY + i]
+                        .setBallColor(color);
+                squares[positX][positY + i]
+                        .setHasBall(true);
+            }
+        } else if (direction == 1) {
+            for (int i = 0; i < number; i++) {
+
+                squares[positX+i][positY]
+                        .setBallColor(color);
+                squares[positX+i][positY]
+                        .setHasBall(true);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
-package com.mygdx.game;
+package com.mygdx.game.funcs;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.SquareItem;
 
 public class CheckBallLines {
 
@@ -25,7 +26,7 @@ public class CheckBallLines {
 
     final char EMPTY_DOT = '.';
 
-    CheckBallLines(SquareItem[][] squares, int colors) {
+    public CheckBallLines(SquareItem[][] squares, int colors) {
 
         this.squares = squares;
         this.colors = colors;
