@@ -6,8 +6,10 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.funcs.CheckBallLines;
 import com.mygdx.game.funcs.FindBallPath;
 
@@ -18,8 +20,12 @@ public class GameField {
 
     private GameScreen gameScreen;
     private Texture texture;
+    private ShapeRenderer shapeRenderer;
 
     private Vector2 position;
+
+    // путь до точки назанчения
+    private Vector2[] path;
 
      // item dimensions
     private int itemWidth;
@@ -44,6 +50,7 @@ public class GameField {
 
     public GameField (GameScreen gameScreen ){
         this.gameScreen = gameScreen;
+        shapeRenderer = new ShapeRenderer();
 
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -61,16 +68,14 @@ public class GameField {
             }
         }
 
-        //aiTurn();
-        addFakeBalls(8,0,0,1,0);
-        addFakeBalls(8,0,1,1,0);
-        addFakeBalls(3,0,2,1,0);
-        addFakeBalls(4,0,2,5,0);
-        addFakeBalls(9,0,4,0,0);
+        aiTurn();
+//        addFakeBalls(8,0,0,1,0);
+//        addFakeBalls(8,0,1,1,0);
+//        addFakeBalls(3,0,2,1,0);
+//        addFakeBalls(4,0,2,5,0);
+//        addFakeBalls(9,0,4,0,0);
 
-        FindBallPath finder = new FindBallPath(squares,
-                new Vector2(2,0),
-                new Vector2(3,4)) ;
+
 
     }
 
@@ -94,8 +99,35 @@ public class GameField {
             }
         }
 
+        if (path != null && path.length != 0) {
+            // Draw the dots
+
+            // получаем координаты центров ячеек
+            Vector2[] centers = new Vector2[path.length];
+            for (int i = 0; i < path.length ; i++) {
+                centers[i] = squares[(int)path[i].x][(int)path[i].y].getCenterPosition();
+            }
+
+            float[] floats = vector2ArrayToFloatArray(centers);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.polyline(floats);
+            shapeRenderer.end();
+        }
+
 
     }
+
+
+    private float[] vector2ArrayToFloatArray(Vector2[] dots){
+        float[] floatDots = new float[dots.length * 2];
+        int i = 0;
+        for (Vector2 dot : dots){
+            floatDots[i++] = dot.x;
+            floatDots[i++] = dot.y;
+        }
+        return floatDots;
+    }
+
 
     public void update( float dt) {
 
@@ -110,8 +142,9 @@ public class GameField {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 Vector2 clickPosition = null;
                 if (button == Input.Buttons.LEFT) {
-                    // do something
+
                     if (isBallSelected ) {
+                        // если шар уже выбран то проверяем куда потом нажали
                         clickPosition = checkClickEvent(screenX,screenY);
                         if (clickPosition.equals(selectedBall)) {
                             returnSquareInitState(clickPosition);
@@ -119,28 +152,37 @@ public class GameField {
                             isBallSelected = false;
                             selectedBall = null;
                         } else {
-
                             // получаем информацию из выбранного шара и убераем его
                             int color = squares[(int)selectedBall.x][(int)selectedBall.y].getBallColor();
                             returnSquareInitState(new Vector2(selectedBall));
 
-//                            squares[(int)selectedBall.x][(int)selectedBall.y].setHasBall(false);
-//                            squares[(int)selectedBall.x][(int)selectedBall.y].setActive(false);
+                            // проверяем на наличие прохода для шарика
+                            FindBallPath finder = new FindBallPath(squares,
+                                    selectedBall,
+                                    clickPosition) ;
 
-                            // переносим в другую ячейку
-                            squares[(int)clickPosition.x][(int)clickPosition.y].setHasBall(true);
-                            squares[(int)clickPosition.x][(int)clickPosition.y].setBallColor(color);
-                            isBallSelected = false;
-                            selectedBall   = null ;
-                            CheckBallLines check = new CheckBallLines(squares,numberOfColors);
-                            boolean hasLine = check.startCheck();
-                            if(hasLine && check.getBallsInLine() != null) {
-                                deleteBalls(check.getBallsInLine());
+                            // передаем путь до точки
+                            boolean pathIsFind = finder.findPath();
+                            if(pathIsFind) {
+                                path = finder.getPath();
+                                // переносим в другую ячейку
+                                squares[(int)clickPosition.x][(int)clickPosition.y].setHasBall(true);
+                                squares[(int)clickPosition.x][(int)clickPosition.y].setBallColor(color);
+                                isBallSelected = false;
+                                selectedBall   = null ;
+
+                                // проверяем на наличие составленных линий
+                                CheckBallLines check = new CheckBallLines(squares,numberOfColors);
+                                boolean hasLine = check.startCheck();
+                                if(hasLine && check.getBallsInLine() != null) {
+                                    deleteBalls(check.getBallsInLine());
+                                }
                             }
 
                             aiTurn();
                         }
                     }  else if (!isBallSelected){
+                        // если шар еще не выбран то выбираем его
                         clickPosition = checkClickEvent(screenX,screenY);
                         if (clickPosition != null) {
                             if (squares[(int)clickPosition.x][(int)clickPosition.y].isHasBall()) {

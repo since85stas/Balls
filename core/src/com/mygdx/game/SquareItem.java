@@ -124,6 +124,10 @@ public class SquareItem {
         return textureName;
     }
 
+    public Vector2 getCenterPosition () {
+        return new Vector2(position.x+width/2, position.y+height/2);
+    }
+
     public void setHasBall(boolean hasBall) {
         this.hasBall = hasBall;
     }
