@@ -11,7 +11,7 @@ public class CheckBallLines {
     //1. параметры игрового поля
     int SIZE_Y; //размер поля по вертикале
     int SIZE_X;
-    int SIZE_WIN = 3; //кол-во заполненных подряд полей для победы
+    int SIZE_WIN = 5; //кол-во заполненных подряд полей для победы
     char[][] fieldg;
     int colors;
 

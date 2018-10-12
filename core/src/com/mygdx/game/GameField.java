@@ -100,7 +100,6 @@ public class GameField {
         }
 
         if (path != null && path.length != 0) {
-            // Draw the dots
 
             // получаем координаты центров ячеек
             Vector2[] centers = new Vector2[path.length];
@@ -245,7 +244,7 @@ public class GameField {
 
     }
 
-    /*  проверяем из всех ячеек где нет шариковб получаем список таких ячеек в виде String[]
+    /*  проверяем из всех ячеек где нет шариков получаем список таких ячеек в виде String[]
 
      */
     public Vector2[] checkSquares () {
