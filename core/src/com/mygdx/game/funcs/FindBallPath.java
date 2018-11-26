@@ -12,6 +12,10 @@ public class FindBallPath {
 
     private Vector2 from;
     private Vector2 to;
+
+    // в каком направлении мы в последний раз сходили
+    private int lastMovement;
+
     private SquareItem[][] squares;
     private boolean[][] field;
     private Cell[][] cells;
@@ -193,6 +197,8 @@ public class FindBallPath {
                     direction = Constants.RIGHT;
                 } else if (dx < 0) {
                     direction = Constants.LEFT;
+                } else if (dx == 0) {
+
                 }
                 break;
             case VERTICAL:
@@ -203,15 +209,30 @@ public class FindBallPath {
                 }
                 break;
         }
+
+//        if (isOpposite(direction,lastMovement)) {
+//            direction = getOppositeTo(direction);
+//        }
         return direction;
     }
 
-    private void checkStopPoint() {
-        if (cells[currentCellI][currentCellJ].isHasDirections()) {
+    private boolean isOpposite (int direction1, int dirextion2) {
 
-
-        }
+        if (direction1 == Constants.LEFT && dirextion2 == Constants.RIGHT) return true;
+        if (direction1 == Constants.RIGHT && dirextion2 == Constants.LEFT) return true;
+        if (direction1 == Constants.UP && dirextion2 == Constants.DOWN) return true;
+        if (direction1 == Constants.DOWN && dirextion2 == Constants.UP) return true;
+        return false;
     }
+
+    private int getOppositeTo(int direction) {
+        if (direction == Constants.LEFT) return Constants.RIGHT;
+        if (direction == Constants.RIGHT) return Constants.LEFT;
+        if (direction == Constants.UP) return Constants.DOWN;
+        if (direction == Constants.DOWN) return Constants.UP;
+        return -77;
+     }
+
 
     private boolean checkLeftCell(int i, int j) {
         boolean result = false;
@@ -255,40 +276,6 @@ public class FindBallPath {
         }
         Gdx.app.log(TAG, "checkUpCell");
         return result;
-    }
-
-
-    private boolean checkCellsRecursion(int i, int j) {
-        if (i == to.x && j == to.y) {
-            return true;
-        }
-
-        // проходим по всем направлениям
-        if (cells[i][j].directionLeft) {
-            cells[i][j].directionLeft = false;
-            i = i - 1;
-            cells[i][j].directionRight = false;
-            checkCellsRecursion(i, j);
-        }
-        if (cells[i][j].directionRight) {
-            cells[i][j].directionRight = false;
-            i = i - 1;
-            cells[i][j].directionLeft = false;
-            checkCellsRecursion(i, j);
-        }
-        if (cells[i][j].directionDown) {
-            cells[i][j].directionDown = false;
-            j = j - 1;
-            cells[i][j].directionUp = false;
-            checkCellsRecursion(i, j);
-        }
-        if (cells[i][j].directionUp) {
-            cells[i][j].directionUp = false;
-            j = j + 1;
-            cells[i][j].directionDown = false;
-            checkCellsRecursion(i, j);
-        }
-        return false;
     }
 
 
@@ -391,52 +378,8 @@ public class FindBallPath {
     }
 
 
-    private boolean goToAdjCell(int i, int j, int direction) {
-
-        switch (direction) {
-            case Constants.LEFT:
-                if (cells[i][j].directionLeft) {
-                    return true;
-                } else {
-                    return false;
-                }
-            case Constants.RIGHT:
-                if (cells[i][j].directionRight) {
-                    return true;
-                } else {
-                    return false;
-                }
-            case Constants.DOWN:
-                if (cells[i][j].directionDown) {
-                    return true;
-                } else {
-                    return false;
-                }
-            case Constants.UP:
-                if (cells[i][j].directionUp) {
-                    return true;
-                } else {
-                    return false;
-                }
-            default:
-                return false;
-        }
-    }
-
-
     private void showCells(Cell[][] cells) {
         for (int j = sizeY - 1; j > -1; j--) {
-//            Gdx.app.log(TAG, "j= " + j + " " +
-//                    cells[0][j].isHasBall() + " " +
-//                    cells[1][j].isHasBall() + " " +
-//                    cells[2][j].isHasBall() + " " +
-//                    cells[3][j].isHasBall() + " " +
-//                    cells[4][j].isHasBall() + " " +
-//                    cells[5][j].isHasBall() + " " +
-//                    cells[6][j].isHasBall() + " " +
-//                    cells[7][j].isHasBall() + " " +
-//                    cells[8][j].isHasBall()
-//            );
             Gdx.app.log(TAG, "j= " + j + " " +
                     cells[0][j].isValidCell() + " " +
                     cells[1][j].isValidCell() + " " +
@@ -452,12 +395,7 @@ public class FindBallPath {
         Gdx.app.log(TAG, "\n");
     }
 
-    private enum direction {
-
-    }
-
     public Vector2[] getPath() {
         Vector2[] pathArray = path.toArray( new Vector2[path.size()]);
-        return pathArray;
-    }
+        return pathArray;    }
 }

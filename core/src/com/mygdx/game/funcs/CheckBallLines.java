@@ -14,6 +14,7 @@ public class CheckBallLines {
     int SIZE_WIN = 5; //кол-во заполненных подряд полей для победы
     char[][] fieldg;
     int colors;
+    int numberBallsInLine = 0;
 
     int finalBallXindx;
     int finalBallYindx;
@@ -38,7 +39,6 @@ public class CheckBallLines {
         for (int i = 0; i < SIZE_X; i++) {
             for (int j = 0; j < SIZE_Y; j++) {
                 if (squares[i][j].isHasBall()) {
-                    //fieldg[i][j] = (char)squares[i][j].getBallColor();
                     fieldg[i][j] = Character.forDigit(squares[i][j].getBallColor(), 10);
                 } else {
                     fieldg[i][j] = '.';
@@ -64,27 +64,31 @@ public class CheckBallLines {
 
     //проверка победы
     private boolean checkWin(char dot) {
+        int numBalls = 0;
         for (int v = 0; v < SIZE_Y; v++) {
             for (int h = 0; h < SIZE_X; h++) {
                 //анализ наличие поля для проверки
                 if (h + SIZE_WIN <= SIZE_X) {                           //по горизонтале
-                    if (checkLineHorisont(v, h, dot) >= SIZE_WIN) {
+                    if ( (numBalls = checkLineHorisont(v, h, dot)) >= SIZE_WIN) {
+                        numberBallsInLine = numBalls;
                         return true;
                     }
-
                     if (v - SIZE_WIN > -2) {                            //вверх по диагонале
-                        if (checkDiaUp(v, h, dot) >= SIZE_WIN) {
+                        if ( (numBalls =checkDiaUp(v, h, dot)) >= SIZE_WIN) {
+                            numberBallsInLine = numBalls;
                             return true;
                         }
                     }
                     if (v + SIZE_WIN <= SIZE_Y) {                       //вниз по диагонале
-                        if (checkDiaDown(v, h, dot) >= SIZE_WIN) {
+                        if ( (numBalls =checkDiaDown(v, h, dot)) >= SIZE_WIN) {
+                            numberBallsInLine = numBalls;
                             return true;
                         }
                     }
                 }
                 if (v + SIZE_WIN <= SIZE_Y) {                       //по вертикале
-                    if (checkLineVertical(v, h, dot) >= SIZE_WIN) {
+                    if ( (numBalls = checkLineVertical(v, h, dot)) >= SIZE_WIN) {
+                        numberBallsInLine = numBalls;
                         return true;
                     }
                 }
@@ -118,8 +122,8 @@ public class CheckBallLines {
             }
         return count;
     }
-    //проверка заполнения всей линии по диагонале вниз
 
+    //проверка заполнения всей линии по диагонале вниз
     private int checkDiaDown(int v, int h, char dot) {
         int count = 0;
         int cycleValue = SIZE_WIN;
@@ -197,5 +201,7 @@ public class CheckBallLines {
         return count;
     }
 
-
+    public int getNumberBallsInLine() {
+        return numberBallsInLine;
+    }
 }

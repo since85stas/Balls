@@ -25,16 +25,13 @@ public class LinesGame extends Game {
     @Override
     public void render () {
         float dt = Gdx.graphics.getDeltaTime();
-        update(dt);
+        //update(dt);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         getScreen().render(dt);
 
     }
 
-    public void update ( float dt) {
-
-    }
 
     @Override
     public void dispose () {

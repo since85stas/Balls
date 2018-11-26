@@ -10,7 +10,7 @@ public class SquareItem {
     private GameScreen gameScreen;
     private Texture textureSquare;
     private Texture textureBall;
-    public Rectangle hitBox;
+    public  Rectangle hitBox;
 
     private Vector2 position;
     private Vector2 ballPosition;
@@ -26,7 +26,7 @@ public class SquareItem {
     private float ballVelocity = Constants.BALL_VELOCITY;
     private float ballDeformationVelocity    = Constants.DEFORMATION_VELOCITY;
     private int   ballColor      ;
-
+    private boolean nextTurnBall = false;
 
     // collision parameters
     private float ballDeformation  ;
@@ -58,17 +58,25 @@ public class SquareItem {
                     ,width*Constants.BALL_SIZE_RATIO
                     ,height*Constants.BALL_SIZE_RATIO + ballDeformation);
         }
+
+        if (nextTurnBall) {
+            batch.draw(drawBall(ballColor)
+                    ,ballPosition.x
+                    ,ballPosition.y
+                    ,width*Constants.BALL_PREVIEW_RATIO
+                    ,height*Constants.BALL_PREVIEW_RATIO );
+        }
     }
 
 
     public void update(float dt) {
         if (isActive && hasBall)  {
-            changeBallPosition(dt);
+            changeBallDrawing(dt);
         }
         //if (Gdx.input.isCursorCatched())
     }
 
-    public void changeBallPosition ( float dt ) {
+    public void changeBallDrawing(float dt ) {
         ballactiveTime += dt;
 
         if ( ballPosition.y - position.y <= 0 && !stopCollision ) {
@@ -98,6 +106,7 @@ public class SquareItem {
         float ballPositionDel = (width - width*Constants.BALL_SIZE_RATIO)/2;
         ballPosition.x  =  position.x + ballPositionDel;
         ballPosition.y  =  position.y + ballPositionDel;
+        ballDeformation = 0;
     }
 
     public Texture drawBall (int ballColor) {
@@ -147,4 +156,8 @@ public class SquareItem {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    public boolean isNextTurnBall() { return nextTurnBall;  }
+
+    public void setNextTurnBall(boolean nextTurnBall) {   this.nextTurnBall = nextTurnBall; }
 }
