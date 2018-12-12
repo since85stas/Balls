@@ -57,7 +57,6 @@ public class FindBallPath {
 
     public boolean findPath () {
         boolean result = false;
-
         for (int i = 0; i < 4; i++) {
             if (!result) {
                 currentCellI = (int) from.x;
@@ -65,7 +64,6 @@ public class FindBallPath {
                 result = checkCells();
             }
         }
-
         return result;
     }
 
@@ -77,12 +75,13 @@ public class FindBallPath {
         //hasPath = ballMovement();
 
         while (!hasPath) {
-
             hasPath = ballMovement();
-
             // проверка на предыдущую ячейку с открытой границей
-            if (!hasPath && path.size() != 0) {
+            if (!hasPath ) {
                 int size = path.size();
+//                if (size == 0) {
+//                    return hasPath;
+//                }
                 for (int iter = size - 1; iter > -1; iter--) {
                     int i = (int) path.get(iter).x;
                     int j = (int) path.get(iter).y;

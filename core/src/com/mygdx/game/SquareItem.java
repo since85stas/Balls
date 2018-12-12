@@ -10,6 +10,11 @@ public class SquareItem {
     private GameScreen gameScreen;
     private Texture textureSquare;
     private Texture textureBall;
+
+    public Texture getTextureBall() {
+        return textureBall;
+    }
+
     public  Rectangle hitBox;
 
     private Vector2 position;
@@ -135,6 +140,10 @@ public class SquareItem {
 
     public Vector2 getCenterPosition () {
         return new Vector2(position.x+width/2, position.y+height/2);
+    }
+
+    public Vector2 getPosition() {
+        return position;
     }
 
     public void setHasBall(boolean hasBall) {

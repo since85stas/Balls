@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.funcs.CheckBallLines;
@@ -20,13 +21,14 @@ public class GameField {
     private static final  String TAG = GameField.class.getName();
 
     private GameScreen gameScreen;
-    private Texture texture;
+    private Texture textureBall;
     private ShapeRenderer shapeRenderer;
 
     private Vector2 position;
 
     // путь до точки назанчения
     private Vector2[] path;
+    private Vector2[] ballPathCellsCoord;
 
      // item dimensions
     private int itemWidth;
@@ -40,15 +42,20 @@ public class GameField {
 
     // turnParameters
     private boolean isBallSelected = false;
+    private boolean isDrawBallPath = false;
     private Vector2 selectedBall;
     private Vector2[] nextTurnBallCells ;
 
     // массив с ячейками
     private SquareItem[][] squares ;
 
-    private static boolean isAiTurn;
+    // для передвижения
+    private float ballMoveX ;
+    private float ballMoveY ;
 
     public float gameTime;
+    private float ballMoveTime;
+    private int ballMoveNumber = 1;
 
     public GameField (GameScreen gameScreen ){
         this.gameScreen = gameScreen;
@@ -69,6 +76,8 @@ public class GameField {
                 squares[j][i] = new SquareItem(gameScreen,itemWidth,itemWidth,position);
             }
         }
+
+
 
         nextTurnBallCells = new Vector2[numberOfAiBalls];
         numberOfTurns = 0;
@@ -96,7 +105,7 @@ public class GameField {
 
         update(dt);
 
-        for (int i = 0; i < fieldDimension ; i++) {
+        for ( int i = 0; i < fieldDimension ; i++ ) {
             for (int j = 0; j < fieldDimension -1 ; j++) {
                 //if(isBallSelected && selectedBall!=null&& squares[i][j].isHasBall()) {
                     squares[i][j].render(batch);
@@ -104,16 +113,21 @@ public class GameField {
             }
         }
 
-        if (path != null && path.length != 0) {
+        if (path != null && path.length != 0 && isDrawBallPath) {
+            ballMoveTime += dt;
 
-            // получаем координаты центров ячеек
-            Vector2[] centers = new Vector2[path.length];
-            for (int i = 0; i < path.length ; i++) {
-                centers[i] = squares[(int)path[i].x][(int)path[i].y].getCenterPosition();
-            }
-//            float[] floats = vector2ArrayToFloatArray(centers);
+            batch.draw(textureBall,
+                    ballMoveX,
+                    ballMoveY,
+                    itemWidth*Constants.BALL_SIZE_RATIO,
+                    itemWidth*Constants.BALL_SIZE_RATIO);
+            updateMove(dt);
+            Gdx.app.log("Move","move time=" + ballMoveTime);
+            //float[] floats = vector2ArrayToFloatArray(centers);
 //            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 //            shapeRenderer.polyline(floats);
+//            Polyline lines = new Polyline(floats);
+//            lines.
 //            shapeRenderer.end();
         }
 
@@ -167,24 +181,37 @@ public class GameField {
 
                             // передаем путь до точки
                             boolean pathIsFind = finder.findPath();
+
                             if(pathIsFind) {
                                 path = finder.getPath();
+
+                                // получаем координаты центров ячеек
+                                ballPathCellsCoord  = new Vector2[path.length];
+                                for (int i = 0; i < path.length ; i++) {
+                                    ballPathCellsCoord[i] = squares[(int)path[i].x][(int)path[i].y].getPosition();
+                                }
+
+                                ballMoveX = ballPathCellsCoord[0].x;
+                                ballMoveY = ballPathCellsCoord[0].y;
+                                textureBall=squares[(int)selectedBall.x][(int)selectedBall.y].getTextureBall();
+
+                                isDrawBallPath = true;
                                 // переносим в другую ячейку
                                 squares[(int)clickPosition.x][(int)clickPosition.y].setHasBall(true);
+
                                 squares[(int)clickPosition.x][(int)clickPosition.y].setBallColor(color);
                                 isBallSelected = false;
                                 selectedBall   = null ;
-
-                                // проверяем на наличие составленных линий
-                                CheckBallLines check = new CheckBallLines(squares,numberOfColors);
-                                boolean hasLine = check.startCheck();
-                                if(hasLine && check.getBallsInLine() != null) {
-                                    deleteBalls(check.getBallsInLine());
-                                    gameScore += check.getNumberBallsInLine()*Constants.SCORED_PER_BALL;
-                                }
                             }
-
                             aiTurn();
+
+                            // проверяем на наличие составленных линий
+                            CheckBallLines check = new CheckBallLines(squares,numberOfColors);
+                            boolean hasLine = check.startCheck();
+                            if(hasLine && check.getBallsInLine() != null) {
+                                deleteBalls(check.getBallsInLine());
+                                gameScore += check.getNumberBallsInLine()*Constants.SCORED_PER_BALL;
+                            }
                         }
                     }  else if (!isBallSelected){
                         // если шар еще не выбран то выбираем его
@@ -203,6 +230,29 @@ public class GameField {
                 return false;
             }
         });
+    }
+
+    private void updateMove(float dt) {
+         Gdx.app.log(TAG,"ballMove " + ballMoveNumber);
+         float dx = path[ballMoveNumber].x - path[ballMoveNumber-1].x;
+         float dy = path[ballMoveNumber].y - path[ballMoveNumber-1].y;
+
+         if (Math.abs(dx) > 0) {
+             ballMoveX += dx/Math.abs(dx)*Constants.MOVE_VEL*dt;
+         } else if (Math.abs(dy) > 0) {
+             ballMoveY += dy/Math.abs(dy)*Constants.MOVE_VEL*dt;
+         }
+
+         if ( Math.abs(ballMoveX) > itemWidth || Math.abs(ballMoveY) > itemWidth ) {
+             ballMoveNumber++;
+             if (ballMoveNumber < path.length-1) {
+                 ballMoveX = ballPathCellsCoord[ballMoveNumber].x;
+                 ballMoveY = ballPathCellsCoord[ballMoveNumber].y;
+             } else {
+                 isDrawBallPath = false;
+                 ballMoveNumber = 1;
+             }
+         }
     }
 
     public int getGameScore() {
