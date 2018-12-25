@@ -17,9 +17,7 @@ public class LinesGame extends Game {
         batch = new SpriteBatch();
         gameScreen = new GameScreen(this,batch);
         viewport   = new FitViewport(1280,720);
-
         setScreen(gameScreen);
-
     }
 
     @Override
@@ -29,9 +27,7 @@ public class LinesGame extends Game {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         getScreen().render(dt);
-
     }
-
 
     @Override
     public void dispose () {

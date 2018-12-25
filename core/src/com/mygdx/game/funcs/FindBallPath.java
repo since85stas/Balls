@@ -34,6 +34,7 @@ public class FindBallPath {
     private int currentCellI;
     private int currentCellJ;
 
+    //TODO: убрать SquareItem из конструктора
     public FindBallPath(SquareItem[][] squares, Vector2 from, Vector2 to) {
         this.squares = squares;
         this.from = from;
@@ -55,7 +56,7 @@ public class FindBallPath {
         Gdx.app.log(TAG, "field" + field);
     }
 
-    public boolean findPath () {
+    public boolean findPath() {
         boolean result = false;
         for (int i = 0; i < 4; i++) {
             if (!result) {
@@ -77,23 +78,20 @@ public class FindBallPath {
         while (!hasPath) {
             hasPath = ballMovement();
             // проверка на предыдущую ячейку с открытой границей
-            if (!hasPath ) {
-                int size = path.size();
-//                if (size == 0) {
-//                    return hasPath;
-//                }
-                for (int iter = size - 1; iter > -1; iter--) {
-                    int i = (int) path.get(iter).x;
-                    int j = (int) path.get(iter).y;
-                    if (checkLeftCell(i, j) || checkRightCell(i, j) || checkDownCell(i, j) || checkUpCell(i, j)) {
-                        currentCellI = (int) path.get(iter).x;
-                        currentCellJ = (int) path.get(iter).y;
-                        break;
+            int size = path.size();
 
-                    } else {
-
-                        path.remove(iter);
-                    }
+            for (int iter = size - 1; iter > -1; iter--) {
+                if (iter == 0) {
+                    return hasPath;
+                }
+                int i = (int) path.get(iter).x;
+                int j = (int) path.get(iter).y;
+                if (checkLeftCell(i, j) || checkRightCell(i, j) || checkDownCell(i, j) || checkUpCell(i, j)) {
+                    currentCellI = (int) path.get(iter).x;
+                    currentCellJ = (int) path.get(iter).y;
+                    break;
+                } else {
+                    path.remove(iter);
                 }
             }
         }
@@ -215,7 +213,7 @@ public class FindBallPath {
         return direction;
     }
 
-    private boolean isOpposite (int direction1, int dirextion2) {
+    private boolean isOpposite(int direction1, int dirextion2) {
 
         if (direction1 == Constants.LEFT && dirextion2 == Constants.RIGHT) return true;
         if (direction1 == Constants.RIGHT && dirextion2 == Constants.LEFT) return true;
@@ -230,7 +228,7 @@ public class FindBallPath {
         if (direction == Constants.UP) return Constants.DOWN;
         if (direction == Constants.DOWN) return Constants.UP;
         return -77;
-     }
+    }
 
 
     private boolean checkLeftCell(int i, int j) {
@@ -395,6 +393,10 @@ public class FindBallPath {
     }
 
     public Vector2[] getPath() {
-        Vector2[] pathArray = path.toArray( new Vector2[path.size()]);
-        return pathArray;    }
+        if (path.size() == 1) {
+            Gdx.app.log(TAG, "wrong path");
+        }
+        Vector2[] pathArray = path.toArray(new Vector2[path.size()]);
+        return pathArray;
+    }
 }
