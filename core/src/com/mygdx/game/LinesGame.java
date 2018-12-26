@@ -17,23 +17,16 @@ public class LinesGame extends Game {
         batch = new SpriteBatch();
         gameScreen = new GameScreen(this,batch);
         viewport   = new FitViewport(1280,720);
-
         setScreen(gameScreen);
-
     }
 
     @Override
     public void render () {
         float dt = Gdx.graphics.getDeltaTime();
-        update(dt);
+        //update(dt);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         getScreen().render(dt);
-
-    }
-
-    public void update ( float dt) {
-
     }
 
     @Override
