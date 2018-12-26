@@ -4,16 +4,19 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
+
+import javax.xml.soap.Text;
 
 public class SquareItem {
     private GameScreen gameScreen;
     private Texture textureSquare;
-    private Texture textureBall;
+//    private Texture textureBall;
 
-    public Texture getTextureBall() {
-        return textureBall;
-    }
+//    public Texture getTextureBall() {
+//        return textureBall;
+//    }
 
     public  Rectangle hitBox;
 
@@ -34,45 +37,43 @@ public class SquareItem {
     private boolean nextTurnBall = false;
 
     // collision parameters
-    private float ballDeformation  ;
+    private float ballDeformation   ;
     private boolean afterCollision = false;
     private boolean stopCollision = false;
 
-
     public SquareItem (GameScreen gameScreen, int width, int height, Vector2 position ){
         this.gameScreen = gameScreen;
-        this.width = width;
-        this.height = height;
-        textureSquare = new Texture("mini_mini_green_rock.png");
-        this.position = position;
+        this.width = width   ;
+        this.height = height ;
+//        textureSquare = Assets.instance.tileAssets.texture;
+        this.position = position ;
         this.hitBox = new Rectangle(position.x,position.y,width,height);
         float ballPositionDel = (width - width*Constants.BALL_SIZE_RATIO)/2;
         ballPosition = new Vector2(position.x + ballPositionDel,position.y + ballPositionDel);
-
     }
-
 
     public void   render (SpriteBatch batch) {
         //batch.draw(textureSquare,position.x,position.y);
-        batch.draw(textureSquare,position.x,position.y,width,height);
+//        batch.draw(textureSquare, position.x, position.y, width, height);
 
         if (hasBall) {
-            batch.draw(drawBall(ballColor)
+            batch.draw(getBallColorText()
                     ,ballPosition.x
                     ,ballPosition.y
                     ,width*Constants.BALL_SIZE_RATIO
                     ,height*Constants.BALL_SIZE_RATIO + ballDeformation);
         }
 
+//        batch.draw(textureSquare, position.x, position.y, width, height);
+
         if (nextTurnBall) {
-            batch.draw(drawBall(ballColor)
+            batch.draw(getBallColorText()
                     ,ballPosition.x
                     ,ballPosition.y
                     ,width*Constants.BALL_PREVIEW_RATIO
                     ,height*Constants.BALL_PREVIEW_RATIO );
         }
     }
-
 
     public void update(float dt) {
         if (isActive && hasBall)  {
@@ -114,28 +115,33 @@ public class SquareItem {
         ballDeformation = 0;
     }
 
-    public Texture drawBall (int ballColor) {
-        textureBall = new Texture(getBallColor(ballColor));
-        return textureBall;
-    }
+//    public Texture drawBall (int ballColor) {
+//        textureBall = new Texture(getBallColor(ballColor));
+//        return textureBall;
+//    }
 
-    private String getBallColor( int colorId ) {
+    public Texture getBallColorText( ) {
         String textureName = null;
-        switch (colorId) {
+        Texture texture = null;
+        switch (ballColor) {
             case 0:
-                textureName = "mini_mini_mini_sphere_blue.png";
+                //textureName = "sphere_blue.png";
+                texture = Assets.instance.blueBallAssets.texture;
                 break;
             case 1:
-                textureName = "mini_mini_mini_sphere_green.png";
+//                textureName = "sphere_green.png";
+                texture = Assets.instance.greenBallAssets.texture;
                 break;
             case 2:
-                textureName = "mini_mini_mini_sphere_purle.png";
+//                textureName = "sphere_purle.png";
+                texture = Assets.instance.purpleBallAssets.texture;
                 break;
             case 3:
-                textureName = "mini_mini_mini_sphere_yellow.png";
+//                textureName = "sphere_yellow.png";
+                texture = Assets.instance.yellowBallAssets.texture;
                 break;
         }
-        return textureName;
+        return texture;
     }
 
     public Vector2 getCenterPosition () {

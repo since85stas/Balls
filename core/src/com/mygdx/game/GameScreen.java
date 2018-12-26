@@ -3,12 +3,14 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
 
 public class GameScreen implements Screen {
@@ -37,6 +39,9 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
+        AssetManager am = new AssetManager();
+        Assets.instance.init(am);
+
 	    gameField = new GameField(this);
 
         // Initialize the HUD viewport
@@ -64,8 +69,9 @@ public class GameScreen implements Screen {
         hudViewport.apply();
 
         // Set the SpriteBatch's projection matrix
-        batch.setProjectionMatrix(hudViewport.getCamera().combined);
+//        batch.setProjectionMatrix(hudViewport.getCamera().combined);
 
+//        batch.disableBlending();
         batch.begin();
 
         //gameField.update(delta);
@@ -78,10 +84,10 @@ public class GameScreen implements Screen {
         font.draw(batch, "Score: " + gameField.getGameScore() + "  Time: " + String.format("%f",gametime),
                 Constants.HUD_MARGIN, Gdx.graphics.getWidth() + Constants.HUD_MARGIN);
 
-
-        float fps = 1 / delta;
-        Gdx.app.log(TAG,"fps =" + fps);
-
+        if (frameTime % 0.5 == 0) {
+            float fps = 1 / delta;
+            Gdx.app.log(TAG, "fps =" + fps);
+        }
         batch.end();
     }
 

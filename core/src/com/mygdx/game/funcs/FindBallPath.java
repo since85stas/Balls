@@ -377,17 +377,17 @@ public class FindBallPath {
 
     private void showCells(Cell[][] cells) {
         for (int j = sizeY - 1; j > -1; j--) {
-            Gdx.app.log(TAG, "j= " + j + " " +
-                    cells[0][j].isValidCell() + " " +
-                    cells[1][j].isValidCell() + " " +
-                    cells[2][j].isValidCell() + " " +
-                    cells[3][j].isValidCell() + " " +
-                    cells[4][j].isValidCell() + " " +
-                    cells[5][j].isValidCell() + " " +
-                    cells[6][j].isValidCell() + " " +
-                    cells[7][j].isValidCell() + " " +
-                    cells[8][j].isValidCell()
-            );
+//            Gdx.app.log(TAG, "j= " + j + " " +
+//                    cells[0][j].isValidCell() + " " +
+//                    cells[1][j].isValidCell() + " " +
+//                    cells[2][j].isValidCell() + " " +
+//                    cells[3][j].isValidCell() + " " +
+//                    cells[4][j].isValidCell() + " " +
+//                    cells[5][j].isValidCell() + " " +
+//                    cells[6][j].isValidCell() + " " +
+//                    cells[7][j].isValidCell() + " " +
+//                    cells[8][j].isValidCell()
+//            );
         }
         Gdx.app.log(TAG, "\n");
     }
