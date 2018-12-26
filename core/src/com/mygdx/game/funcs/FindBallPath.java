@@ -73,8 +73,6 @@ public class FindBallPath {
         path = new ArrayList<>();
         path.add(new Vector2(currentCellI, currentCellJ));
 
-        //hasPath = ballMovement();
-
         while (!hasPath) {
             hasPath = ballMovement();
             // проверка на предыдущую ячейку с открытой границей
@@ -157,10 +155,9 @@ public class FindBallPath {
                     }
             }
 
-
             // проверка на попадание в Нужную точку
             if (currentCellI == to.x && currentCellJ == to.y) {
-                Gdx.app.log(TAG, "Eaaa");
+                Gdx.app.log(TAG, "Get to final point");
                 hasPath = true;
                 break;
             }
@@ -170,7 +167,7 @@ public class FindBallPath {
 
     private int findPrioriativeDirection() {
         int direction = -1;
-        int directionCase;
+        int directionCase ;
         int dx = (int) to.x - currentCellI;
         int dy = (int) to.y - currentCellJ;
 
@@ -214,7 +211,6 @@ public class FindBallPath {
     }
 
     private boolean isOpposite(int direction1, int dirextion2) {
-
         if (direction1 == Constants.LEFT && dirextion2 == Constants.RIGHT) return true;
         if (direction1 == Constants.RIGHT && dirextion2 == Constants.LEFT) return true;
         if (direction1 == Constants.UP && dirextion2 == Constants.DOWN) return true;
@@ -358,7 +354,6 @@ public class FindBallPath {
                         directionUp = true;
                     }
                 }
-
                 if (field[i][j]) {
                     cellHasBall = false;
                 } else {
@@ -369,7 +364,7 @@ public class FindBallPath {
             }
         }
 
-        showCells(cells);
+//        showCells(cells);
         Gdx.app.log(TAG, "test");
         return cells;
     }

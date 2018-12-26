@@ -49,12 +49,11 @@ public class Assets implements Disposable, AssetErrorListener {
 //        Texture tileTexture = assetManager.get("green_rock.png");
         Texture tileTexture = assetManager.get("mini_brown_rock.png");
 //        enemyAssets = new EnemyAssets(walkTexture);
-        blueBallAssets = new BlueBallAssets(blueBallTexture);
-        greenBallAssets = new GreenBallAssets(greenBallTexture);
+        blueBallAssets   = new BlueBallAssets(blueBallTexture);
+        greenBallAssets  = new GreenBallAssets(greenBallTexture);
         purpleBallAssets = new PurpleBallAssets(purleBallTexture);
         yellowBallAssets = new YellowBallAssets(yellowBallTexture);
-
-        tileAssets = new TileAssets(tileTexture);
+        tileAssets       = new TileAssets(tileTexture);
 //        crosshairAssets = new CrosshairAssets(crossTexture);
     }
 

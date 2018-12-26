@@ -94,19 +94,24 @@ public class GameField {
         nextTurnBallCells = new Vector2[numberOfAiBalls];
         numberOfTurns = 0;
         gameScore = 0;
-
-        aiTurn();
+//        aiTurn();
 
         // определяем эффекты
         ParticleEffect touchEffect = new ParticleEffect();
-        touchEffect.load(Gdx.files.internal("UdacityEmitter.p"), Gdx.files.internal(""));
+        touchEffect.load(Gdx.files.internal ("fire2.p"), Gdx.files.internal("") );
         touchEffect.setEmittersCleanUpBlendFunction(true);
-        touchEffectPool = new ParticleEffectPool(touchEffect, 1, 2);
-//        addFakeBalls(3,0,4,3,0);
-//        addFakeBalls(8,0,1,1,0);
+        touchEffectPool = new ParticleEffectPool(touchEffect, 5, 7);
+        spawnParticleEffect(-300,-100);
+        addFakeBalls(3,0,0,5,0);
+        addFakeBalls(3,0,1,5,0);
+        addFakeBalls(3,0,2,5,0);
+        addFakeBalls(3,0,3,5,0);
+        addFakeBalls(3,0,4,5,0);
+//        addFakeBalls(1,1,0,6,1);
+//        addFakeBalls(1,0,6,2,1);
 //        addFakeBalls(1,0,0,3,0);
 //        addFakeBalls(4,0,2,5,0);
-        //addFakeBalls(9,0,4,0,0);
+//        addFakeBalls(9,0,4,0,0);
 
     }
 
@@ -116,6 +121,9 @@ public class GameField {
             squares[(int) balls[i].x][(int) balls[i].y].setHasBall(false);
             squares[(int) balls[i].x][(int) balls[i].y].setBallInCenter();
             squares[(int) balls[i].x][(int) balls[i].y].setActive(false);
+            float x = squares[(int)balls[i].x][(int)balls[i].y].getCenterPosition().x;
+            float y = squares[(int)balls[i].x][(int)balls[i].y].getCenterPosition().y;
+            spawnParticleEffect((int)x,(int)y);
         }
     }
 
@@ -136,6 +144,7 @@ public class GameField {
         }
 
         if (effects.size > 0){
+            Gdx.app.log(TAG,"has effect");
             for (int i = effects.size - 1; i >= 0; i--) {
                 ParticleEffectPool.PooledEffect effect = effects.get(i);
                 effect.draw(batch, dt);
@@ -192,7 +201,8 @@ public class GameField {
 
     private void spawnParticleEffect(int x, int y) {
         ParticleEffectPool.PooledEffect effect = touchEffectPool.obtain();
-        effect.setPosition(x, Gdx.graphics.getHeight() - y);
+//        effect.setPosition(x, Gdx.graphics.getHeight() - y);
+        effect.setPosition(x, y);
         effects.add(effect);
     }
 
@@ -218,7 +228,7 @@ public class GameField {
         Gdx.input.setInputProcessor(new InputAdapter() {
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 Vector2 clickPosition = null;
-                spawnParticleEffect(screenX,screenY);
+//                spawnParticleEffect(screenX,screenY);
                 if (button == Input.Buttons.LEFT) {
 
                     if (isBallSelected) {
@@ -232,7 +242,7 @@ public class GameField {
 
                         // передаем путь до точки
                         boolean pathIsFind = finder.findPath();
-
+                        Gdx.app.log(TAG,"pathFind =" + pathIsFind);
                         if (clickPosition.equals(selectedBall)) {
                             returnSquareInitState(clickPosition, false);
 
