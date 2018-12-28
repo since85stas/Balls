@@ -107,8 +107,6 @@ public class GameScreen implements Screen {
         batch.dispose();
     }
 
-
-
     @Override
     public void pause() {
 

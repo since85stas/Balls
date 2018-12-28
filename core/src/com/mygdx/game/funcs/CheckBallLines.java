@@ -1,9 +1,12 @@
 package com.mygdx.game.funcs;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.SquareItem;
 
 public class CheckBallLines {
+
+    private static final String TAG = CheckBallLines.class.getName();
 
     // массив с ячейками
     private SquareItem[][] squares;
@@ -50,16 +53,14 @@ public class CheckBallLines {
 
     public boolean startCheck() {
         boolean win = false;
-
         for (int i = 0; i < colors; i++) {
             char check = Character.forDigit(i, 10);
             win = checkWin(check);
             if (win) return win;
         }
-
+//        Gdx.app.log(TAG,"path=" + win,);
         System.out.println();
         return win;
-
     }
 
     //проверка победы
@@ -86,7 +87,7 @@ public class CheckBallLines {
                         }
                     }
                 }
-                if (v + SIZE_WIN <= SIZE_Y) {                       //по вертикале
+                if (v + SIZE_WIN <= SIZE_Y) {                           //по вертикале
                     if ( (numBalls = checkLineVertical(v, h, dot)) >= SIZE_WIN) {
                         numberBallsInLine = numBalls;
                         return true;
@@ -94,6 +95,7 @@ public class CheckBallLines {
                 }
             }
         }
+
         return false;
     }
 
@@ -144,7 +146,6 @@ public class CheckBallLines {
                     }
                 }
             }
-
         }
         return count;
     }
@@ -169,7 +170,6 @@ public class CheckBallLines {
                     }
                 }
             }
-
         }
         return count;
     }
@@ -195,8 +195,6 @@ public class CheckBallLines {
                     }
                 }
             }
-
-
         }
         return count;
     }

@@ -73,10 +73,13 @@ public class FindBallPath {
         path = new ArrayList<>();
         path.add(new Vector2(currentCellI, currentCellJ));
 
-        while (!hasPath) {
+        do  {
             hasPath = ballMovement();
             // проверка на предыдущую ячейку с открытой границей
             int size = path.size();
+            if (hasPath) {
+                break;
+            }
 
             for (int iter = size - 1; iter > -1; iter--) {
                 if (iter == 0) {
@@ -92,7 +95,7 @@ public class FindBallPath {
                     path.remove(iter);
                 }
             }
-        }
+        } while (!hasPath);
         return hasPath;
     }
 
@@ -157,7 +160,7 @@ public class FindBallPath {
 
             // проверка на попадание в Нужную точку
             if (currentCellI == to.x && currentCellJ == to.y) {
-                Gdx.app.log(TAG, "Get to final point");
+                Gdx.app.log(TAG, "Get to final point pathSize " + path.size());
                 hasPath = true;
                 break;
             }
@@ -171,7 +174,7 @@ public class FindBallPath {
         int dx = (int) to.x - currentCellI;
         int dy = (int) to.y - currentCellJ;
 
-        if (dx <= dy) {
+        if (Math.abs(dx) <= Math.abs(dy)) {
             directionCase = HORIZONTAL;
         } else {
             directionCase = VERTICAL;
@@ -323,6 +326,8 @@ public class FindBallPath {
 
         boolean cellHasBall = false;
 
+        showCells(field);
+
         for (int i = 0; i < sizeX; i++) {
             for (int j = 0; j < sizeY; j++) {
                 directionLeft = false;
@@ -364,25 +369,41 @@ public class FindBallPath {
             }
         }
 
-//        showCells(cells);
+        showCells(cells);
         Gdx.app.log(TAG, "test");
         return cells;
     }
 
-
     private void showCells(Cell[][] cells) {
         for (int j = sizeY - 1; j > -1; j--) {
-//            Gdx.app.log(TAG, "j= " + j + " " +
-//                    cells[0][j].isValidCell() + " " +
-//                    cells[1][j].isValidCell() + " " +
-//                    cells[2][j].isValidCell() + " " +
-//                    cells[3][j].isValidCell() + " " +
-//                    cells[4][j].isValidCell() + " " +
-//                    cells[5][j].isValidCell() + " " +
-//                    cells[6][j].isValidCell() + " " +
-//                    cells[7][j].isValidCell() + " " +
-//                    cells[8][j].isValidCell()
-//            );
+            Gdx.app.log (TAG, "j= " + j + " " +
+                    cells[0][j].isValidCell() + " " +
+                    cells[1][j].isValidCell() + " " +
+                    cells[2][j].isValidCell() + " " +
+                    cells[3][j].isValidCell() + " " +
+                    cells[4][j].isValidCell() + " " +
+                    cells[5][j].isValidCell() + " " +
+                    cells[6][j].isValidCell() + " " +
+                    cells[7][j].isValidCell() + " " +
+                    cells[8][j].isValidCell()
+            );
+        }
+        Gdx.app.log(TAG, "\n");
+    }
+
+    private void showCells(boolean[][] cells) {
+        for (int j = sizeY - 1; j > -1; j--) {
+            Gdx.app.log(TAG, "j= " + j + " " +
+                    cells[0][j] + " " +
+                    cells[1][j] + " " +
+                    cells[2][j] + " " +
+                    cells[3][j] + " " +
+                    cells[4][j] + " " +
+                    cells[5][j] + " " +
+                    cells[6][j] + " " +
+                    cells[7][j] + " " +
+                    cells[8][j]
+            );
         }
         Gdx.app.log(TAG, "\n");
     }

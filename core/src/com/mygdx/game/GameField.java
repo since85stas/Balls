@@ -41,9 +41,9 @@ public class GameField {
     private int itemWidth;
 
     // game parameters
-    private int fieldDimension = 9;
-    private int numberOfAiBalls =2;
-    public int numberOfColors = 4;
+    private int fieldDimension  = 9;
+    private int numberOfAiBalls = 2;
+    public int numberOfColors   = 4;
     private int numberOfTurns;
     private int gameScore;
 
@@ -94,7 +94,7 @@ public class GameField {
         nextTurnBallCells = new Vector2[numberOfAiBalls];
         numberOfTurns = 0;
         gameScore = 0;
-//        aiTurn();
+        aiTurn();
 
         // определяем эффекты
         ParticleEffect touchEffect = new ParticleEffect();
@@ -102,11 +102,11 @@ public class GameField {
         touchEffect.setEmittersCleanUpBlendFunction(true);
         touchEffectPool = new ParticleEffectPool(touchEffect, 5, 7);
         spawnParticleEffect(-300,-100);
-        addFakeBalls(3,0,0,5,0);
-        addFakeBalls(3,0,1,5,0);
-        addFakeBalls(3,0,2,5,0);
-        addFakeBalls(3,0,3,5,0);
-        addFakeBalls(3,0,4,5,0);
+//        addFakeBalls(9,0,0,6,1);
+//        addFakeBalls(9,0,0,7,1);
+//        addFakeBalls(3,0,2,5,0);
+//        addFakeBalls(3,0,3,5,0);
+//        addFakeBalls(3,0,4,5,0);
 //        addFakeBalls(1,1,0,6,1);
 //        addFakeBalls(1,0,6,2,1);
 //        addFakeBalls(1,0,0,3,0);
@@ -136,7 +136,7 @@ public class GameField {
         background.render(batch);
 
         for (int i = 0; i < fieldDimension; i++) {
-            for (int j = 0; j < fieldDimension - 1; j++) {
+            for (int j = 0; j < fieldDimension; j++) {
                 //if(isBallSelected && selectedBall!=null&& squares[i][j].isHasBall()) {
                 squares[i][j].render(batch);
                 //}
@@ -249,7 +249,7 @@ public class GameField {
                             isBallSelected = false;
                             selectedBall = null;
                         } else if (squares[(int) clickPosition.x][(int) clickPosition.y].isHasBall()) {
-                            Gdx.app.log(TAG, "clicked  to ball");
+                            Gdx.app.log(TAG, "clicked  to ball i,j " + clickPosition.x + " " + clickPosition.y );
                         } else if (pathIsFind) {
                             // получаем информацию из выбранного шара и убераем его
                             int color = squares[(int) selectedBall.x][(int) selectedBall.y].getBallColor();
@@ -361,6 +361,7 @@ public class GameField {
         }
         putBall();
         getNextTurnBalls();
+        numberOfTurns++;
     }
 
     private void putBall() {
@@ -412,7 +413,7 @@ public class GameField {
         return freeOut;
     }
 
-    private void addFakeBalls(int number, int color, int positX, int positY, int direction) {
+    private void addFakeBalls (int number, int color, int positX, int positY, int direction) {
 
         if (direction == 0) {
             for (int i = 0; i < number; i++) {
