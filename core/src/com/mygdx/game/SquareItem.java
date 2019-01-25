@@ -4,10 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
-
-import javax.xml.soap.Text;
 
 public class SquareItem {
     private GameScreen gameScreen;

@@ -1,15 +1,16 @@
-package com.mygdx.game;
+package com.mygdx.game.Screens;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.game.GameField;
+import com.mygdx.game.LinesGame;
+import com.mygdx.game.results.AchivementsList;
 import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
 
@@ -20,10 +21,9 @@ public class GameScreen implements Screen {
     private float accumulator = 0;
     private float gametime ;
 
-    private  LinesGame lineGame;
+    private LinesGame lineGame;
     private  SpriteBatch batch ;
-    GameField gameField ;
-
+    public GameField gameField ;
 
     // Add ScreenViewport for HUD
     ScreenViewport hudViewport;
@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
+	    // создаем текстуры
         AssetManager am = new AssetManager();
         Assets.instance.init(am);
 

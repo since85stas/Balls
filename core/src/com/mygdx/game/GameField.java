@@ -10,10 +10,10 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.funcs.CheckBallLines;
 import com.mygdx.game.funcs.FindBallPath;
 import com.mygdx.game.util.Constants;
@@ -194,7 +194,6 @@ public class GameField {
 //            Polyline lines = new Polyline(floats);
 //            lines.
 //            shapeRenderer.end();
-
         }
 
     }
