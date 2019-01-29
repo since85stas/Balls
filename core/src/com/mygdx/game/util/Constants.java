@@ -27,10 +27,19 @@ public class Constants {
     // константы для игры
     public static float SCORED_PER_BALL = 10.f;
 
+    // направления прохода
     public final static int LEFT = 0;
     public final static int RIGHT = 1;
     public final static int UP = 2;
     public final static int DOWN = 3;
 
-
+    // константы для сохр настроек
+    public static final String PREF_ACHIEV = "preference_achieve";
+    public static final String PREF_GAME = "preference_game"     ;
+    public static final String PREF_TIME_PLAYED = "time_played"  ;
+    public static final String PREF_ACHIEV_MASSIVE = "achievements";
+    public static final String PREF_GAME_IS_PLAY   = "game_is_play";
+    public static final String PREF_GAME_MASSIVE   = "game_massive";
+    public static final String PREF_SCORE   = "game_score";
+    public static final String PREF_TURNS   = "game_turns";
 }

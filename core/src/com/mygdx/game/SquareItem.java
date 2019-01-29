@@ -32,7 +32,7 @@ public class SquareItem {
     private float ballactiveTime ;
     private float ballVelocity = Constants.BALL_VELOCITY;
     private float ballDeformationVelocity    = Constants.DEFORMATION_VELOCITY;
-    private int   ballColor      ;
+    private int   ballColor   = -3   ;
     private boolean nextTurnBall = false;
 
     // collision parameters
@@ -55,7 +55,7 @@ public class SquareItem {
         //batch.draw(textureSquare,position.x,position.y);
 //        batch.draw(textureSquare, position.x, position.y, width, height);
 
-        if (hasBall) {
+        if (hasBall && ballColor != -3) {
             batch.draw(getBallColorText()
                     ,ballPosition.x
                     ,ballPosition.y
@@ -65,7 +65,7 @@ public class SquareItem {
 
 //        batch.draw(textureSquare, position.x, position.y, width, height);
 
-        if (nextTurnBall) {
+        if (nextTurnBall && ballColor != -3) {
             batch.draw(getBallColorText()
                     ,ballPosition.x
                     ,ballPosition.y

@@ -26,6 +26,20 @@ import com.mygdx.game.util.Constants;
 
 public class MainMenuScreen extends InputAdapter implements Screen{
 
+    private static final float BUTTONS_HEIGHT = 0.1f;
+    private static final float BUTTONS_WIDTH = 0.6f;
+    private static final float BUTTONS_UPPER_OFFSET = 0.2f;
+    private static final float BUTTONS_BETWEEN_SPACE = 0.05f;
+
+    private static final int numButtons = 4;
+
+    private static final String[] buttonNames = {
+            "continue",
+            "new game",
+            "achievment",
+            "exit"
+    };
+
     SpriteBatch batch;
 //    BitmapFont hudFont;
     LinesGame mGame;
@@ -46,14 +60,14 @@ public class MainMenuScreen extends InputAdapter implements Screen{
         batch = new SpriteBatch();
         widtht = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
-        mySkin = new Skin(Gdx.files.internal("skin_new/glassy-ui.json"));
+        mySkin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
         generateButtons();
 //        hudFont = generateHudFont();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0f, 0f, 1f, 0.7f);
+        Gdx.gl.glClearColor(0f, 0f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         float fps = 1 / delta;
         Gdx.app.log("preLevel","fps =" + fps);
@@ -97,50 +111,55 @@ public class MainMenuScreen extends InputAdapter implements Screen{
     }
 
     private void generateButtons() {
-        Button[] buttons = new Button[1];
+        Button[] buttons = new Button[numButtons];
 
-        float buttonX = widtht/2;
-        float buttonY = height - height*0.1f*2;
+        float buttonX = (widtht - widtht*BUTTONS_WIDTH)/2;
+        float buttonY = height - height*BUTTONS_UPPER_OFFSET;
 
-//        for (int i = 0; i < buttons.length; i++) {
-//            buttonY -= 2*height*0.1;
-//            buttons[i] = new Button();
-//            buttons[i].setSize(100.f,60.f);
-//            buttons[i].setPosition(buttonX,buttonY);
-//
-//            buttons[i].addListener(new InputListener(){
-//                @Override
-//                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-////                outputLabel.setText("Pressed Text Button");
-//                    Gdx.app.log("PreScreen","Pressed");
-//                    Actor act = event.getListenerActor();
-////                    InputEvent ev = event.getListenerActor();
-//
-//                    return true;
-//                }
-//            });
-//            stage.addActor(buttons[i]);
-//        }
+        for (int i = 0; i < buttons.length; i++) {
+            buttonY -= height*BUTTONS_HEIGHT + height*BUTTONS_BETWEEN_SPACE;
 
-        buttonY -= 2*height*0.1;
-        Button startButton = new TextButton("Start",mySkin);
-        startButton.setSize(50.f,30.f);
-        startButton.setPosition(buttonX,buttonY);
-
-        startButton.addListener(new InputListener(){
-            @Override
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-//                outputLabel.setText("Pressed Text Button");
-                Gdx.app.log("PreScreen","Pressed");
-                mGame.setGameScreen();
-                return true;
+            buttons[i] = new TextButton(buttonNames[i],mySkin);
+            if(i==0) {
+                buttons[i].setDisabled(true);
             }
-        });
-        Gdx.input.setInputProcessor(stage);
-//            Actor actor = new Actor();
-//            actor.setName(soundBase.getGameSounds()[i].getName());
-//            actor.
-        stage.addActor(startButton);
+            buttons[i].setSize(widtht*BUTTONS_WIDTH,height*BUTTONS_HEIGHT);
+            buttons[i].setPosition(buttonX,buttonY);
+
+            buttons[i].addListener(new InputListener(){
+                @Override
+                public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+//                outputLabel.setText("Pressed Text Button");
+                    Gdx.app.log("PreScreen","Pressed");
+                    Actor act = event.getListenerActor();
+//                    InputEvent ev = event.getListenerActor();
+
+                    return true;
+                }
+            });
+            stage.addActor(buttons[i]);
+        }
+
+
+//        buttonY -= 2*height*0.1;
+//        Button startButton = new TextButton("Start",mySkin);
+//        startButton.setSize(50.f,30.f);
+//        startButton.setPosition(buttonX,buttonY);
+//
+//        startButton.addListener(new InputListener(){
+//            @Override
+//            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+////                outputLabel.setText("Pressed Text Button");
+//                Gdx.app.log("PreScreen","Pressed");
+//                mGame.setGameScreen();
+//                return true;
+//            }
+//        });
+//        Gdx.input.setInputProcessor(stage);
+////            Actor actor = new Actor();
+////            actor.setName(soundBase.getGameSounds()[i].getName());
+////            actor.
+//        stage.addActor(startButton);
 
     }
 

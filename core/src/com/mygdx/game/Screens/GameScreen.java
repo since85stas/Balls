@@ -21,7 +21,7 @@ public class GameScreen implements Screen {
     private float accumulator = 0;
     private float gametime ;
 
-    private LinesGame lineGame;
+    public LinesGame lineGame;
     private  SpriteBatch batch ;
     public GameField gameField ;
 

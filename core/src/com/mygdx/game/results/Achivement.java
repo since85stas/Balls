@@ -6,8 +6,7 @@ public class Achivement {
     private String  description;
     private int     type;
     private int     cost;
-    private boolean isComplete;
-
+    private int isComplete ;
     private int     crit;
 
     public Achivement(String name, String description, int cost, int type, int crit) {
@@ -16,6 +15,7 @@ public class Achivement {
         this.cost = cost;
         this.type = type;
         this.crit = crit;
+        this.isComplete = 0;
     }
 
     // геттеры
@@ -25,10 +25,12 @@ public class Achivement {
     public String getDescription() {
         return description;
     }
-    public boolean isComplete() {
+    public int isComplete() {
         return isComplete;
     }
-
+    public int getCrit() {
+        return crit;
+    }
     public int getType() {
         return type;
     }
@@ -40,7 +42,7 @@ public class Achivement {
     public void setDescription(String description) {
         this.description = description;
     }
-    public void setComplete(boolean complete) {
+    public void setComplete(int complete) {
         isComplete = complete;
     }
 

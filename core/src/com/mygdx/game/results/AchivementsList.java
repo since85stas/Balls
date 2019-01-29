@@ -9,7 +9,6 @@ public class AchivementsList {
     private static String TAG = AchivementsList.class.getName();
 
     private LinesGame game;
-//    private String
 
     public static Achivement[] achivements;
 
@@ -27,8 +26,8 @@ public class AchivementsList {
         for (int i = 0; i < achivements.length ; i++) {
             try {
                 achivements[i] = new Achivement(
-                        ConstantsAchiveEng.achivementsName[i],
-                        ConstantsAchiveEng.achivementsDescr[i],
+                        ConstantsAchiveEng.achievmentsName[i],
+                        ConstantsAchiveEng.achievementsDescr[i],
                         ConstantsAchiveEng.achivementsCost[i],
                         ConstantsAchiveEng.achivementsType[i],
                         ConstantsAchiveEng.achivementsCriteria[i]
@@ -45,16 +44,37 @@ public class AchivementsList {
         boolean achivementComplete = false;
 
         for (int i = 0; i < achivements.length; i++) {
-            switch (achivements[i].getType()){
+            switch (achivements[i].getType()) {
                 case ConstantsAchiveEng.TYPE_SCORE:
-
+                    if (game.getGameScreen().gameField.getGameScore() > achivements[i].getCrit())  {
+                        achivements[i].setComplete(1);
+                        achivementComplete = true;
+                    }
+                    break;
+                case  ConstantsAchiveEng.TYPE_TIME_SINGLE:
+                    if (game.getGameScreen().gameField.gameTime > achivements[i].getCrit())  {
+                        achivements[i].setComplete(1);
+                        achivementComplete = true;
+                    }
+                    break;
+                case  ConstantsAchiveEng.TYPE_TIME_OVERALL:
+                    if (game.getGameScreen().gameField.gameTime > achivements[i].getCrit())  {
+                        achivements[i].setComplete(1);
+                        achivementComplete = true;
+                    }
+                    break;
             }
         }
 
         return achivementComplete;
     }
 
-
-
+    public int[] getAchievCompArray() {
+        int[] array = new int[achivements.length];
+        for (int i = 0; i < achivements.length; i++) {
+            array[i] = achivements[i].isComplete();
+        }
+        return array;
+    }
 
 }

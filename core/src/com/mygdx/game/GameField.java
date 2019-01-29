@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.funcs.CheckBallLines;
@@ -19,6 +21,7 @@ import com.mygdx.game.funcs.FindBallPath;
 import com.mygdx.game.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class GameField {
     private static final String TAG = GameField.class.getName();
@@ -26,10 +29,10 @@ public class GameField {
     private GameScreen gameScreen;
     private Texture textureBall;
     private ShapeRenderer shapeRenderer;
+    private Preferences gamePref;
 
     private ParticleEffectPool touchEffectPool;
     Array<ParticleEffectPool.PooledEffect> effects = new Array<ParticleEffectPool.PooledEffect>();
-
 
     private Vector2 position;
 
@@ -41,9 +44,9 @@ public class GameField {
     private int itemWidth;
 
     // game parameters
-    private int fieldDimension  = 9;
-    private int numberOfAiBalls = 2;
-    public int numberOfColors   = 4;
+    private int fieldDimension   = 9;
+    private int numberOfAiBalls  = 2;
+    public  int numberOfColors   = 4;
     private int numberOfTurns;
     private int gameScore;
 
@@ -76,7 +79,7 @@ public class GameField {
         int screenWidth = Gdx.graphics.getWidth();
         int screnHeight = Gdx.graphics.getHeight();
 
-        itemWidth = (int) screenWidth / fieldDimension;
+        itemWidth = (int) (screenWidth / fieldDimension);
 
         background = new Background(new Vector2(0,0),screenWidth,screnHeight,fieldDimension);
 
@@ -90,7 +93,6 @@ public class GameField {
             }
         }
 
-
         nextTurnBallCells = new Vector2[numberOfAiBalls];
         numberOfTurns = 0;
         gameScore = 0;
@@ -103,15 +105,42 @@ public class GameField {
         touchEffectPool = new ParticleEffectPool(touchEffect, 5, 7);
         spawnParticleEffect(-300,-100);
 //        addFakeBalls(9,0,0,6,1);
-//        addFakeBalls(9,0,0,7,1);
-//        addFakeBalls(3,0,2,5,0);
-//        addFakeBalls(3,0,3,5,0);
-//        addFakeBalls(3,0,4,5,0);
-//        addFakeBalls(1,1,0,6,1);
-//        addFakeBalls(1,0,6,2,1);
-//        addFakeBalls(1,0,0,3,0);
-//        addFakeBalls(4,0,2,5,0);
-//        addFakeBalls(9,0,4,0,0);
+    }
+
+    private void savePrefer() {
+        gamePref = Gdx.app.getPreferences(Constants.PREF_GAME);
+        gamePref.putFloat(Constants.PREF_TIME_PLAYED,gameTime);
+        gamePref.putFloat(Constants.PREF_SCORE,gameScore);
+        gamePref.putFloat(Constants.PREF_TURNS,numberOfTurns);
+
+        Hashtable<String, String> hashTable = new Hashtable<String, String>();
+        Json json = new Json();
+        int[][] ballColors = new int[fieldDimension][fieldDimension];
+        for (int i = 0; i < fieldDimension ; i++) {
+            for (int j = 0; j < fieldDimension; j++) {
+                int color = squares[i][j].getBallColor();
+                ballColors[i][j] = squares[i][j].getBallColor();
+            }
+        }
+        hashTable.put(Constants.PREF_GAME_MASSIVE, json.toJson(ballColors) ); //here you are serializing the array
+        gamePref.put(hashTable);
+
+        gamePref.flush();
+    }
+
+    private void loadPrefer() {
+        int[][] deserializedInts;
+        gamePref = Gdx.app.getPreferences(Constants.PREF_GAME);
+        gamePref.getFloat(Constants.PREF_TIME_PLAYED,gameTime);
+        gamePref.getFloat(Constants.PREF_SCORE,gameScore);
+        gamePref.getFloat(Constants.PREF_TURNS,numberOfTurns);
+        Json json = new Json();
+        String serializedInts = gamePref.getString(Constants.PREF_GAME_MASSIVE);
+        try {
+            deserializedInts = json.fromJson(int[][].class, serializedInts); //you need to pass the class type - be aware of it!
+        } catch (Exception e) {
+            Gdx.app.log(TAG,"exception getiing field" , e);
+        }
 
     }
 
@@ -252,7 +281,7 @@ public class GameField {
                         } else if (pathIsFind) {
                             // получаем информацию из выбранного шара и убераем его
                             int color = squares[(int) selectedBall.x][(int) selectedBall.y].getBallColor();
-                            returnSquareInitState(new Vector2(selectedBall), true);
+
 
                             path = finder.getPath();
 
@@ -265,6 +294,7 @@ public class GameField {
                             ballMoveX = ballPathCellsCoord[0].x;
                             ballMoveY = ballPathCellsCoord[0].y;
                             textureBall = squares[(int) selectedBall.x][(int) selectedBall.y].getBallColorText();
+                            returnSquareInitState(new Vector2(selectedBall), true);
 
                             if (path.length > 1) {
                                 isDrawBallPath = true;
@@ -349,6 +379,7 @@ public class GameField {
         squares[(int) click.x][(int) click.y].setBallInCenter();
         if (delBall) {
             squares[(int) click.x][(int) click.y].setHasBall(false);
+            squares[(int) click.x][(int) click.y].setBallColor(-3);
         }
     }
 
@@ -358,6 +389,12 @@ public class GameField {
         if (numberOfTurns == 0) {
             getNextTurnBalls();
         }
+        if (numberOfTurns != 0 ) {
+            savePrefer();
+            loadPrefer();
+            gameScreen.lineGame.achivementsList.checkAchivements();
+        }
+
         putBall();
         getNextTurnBalls();
         numberOfTurns++;
