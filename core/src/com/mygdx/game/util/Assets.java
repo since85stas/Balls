@@ -4,10 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeType;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
+
 
 import javax.xml.soap.Text;
 
@@ -31,6 +37,7 @@ public class Assets implements Disposable, AssetErrorListener {
     public PurpleBallAssets purpleBallAssets;
     public YellowBallAssets yellowBallAssets;
     public TileAssets tileAssets;
+    public SkinAssets skinAssets;
 
     public void init(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -39,13 +46,15 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager.load("sphere_green.png",Texture.class);
         assetManager.load("sphere_purle.png",Texture.class);
         assetManager.load("sphere_yellow.png",Texture.class);
-        assetManager.load("green_rock.png",Texture.class);
+        assetManager.load("green_rock.png"   ,Texture.class);
         assetManager.load("mini_brown_rock.png",Texture.class);
+        assetManager.load("skin/craftacular-ui.json",Skin.class);
         assetManager.finishLoading();
         Texture blueBallTexture = assetManager.get  ("sphere_blue.png");
         Texture greenBallTexture = assetManager.get ("sphere_green.png");
         Texture purleBallTexture = assetManager.get ("sphere_purle.png");
         Texture yellowBallTexture = assetManager.get("sphere_yellow.png");
+        Skin mySkin = assetManager.get("skin/craftacular-ui.json");
 //        Texture tileTexture = assetManager.get("green_rock.png");
         Texture tileTexture = assetManager.get("mini_brown_rock.png");
 //        enemyAssets = new EnemyAssets(walkTexture);
@@ -54,6 +63,7 @@ public class Assets implements Disposable, AssetErrorListener {
         purpleBallAssets = new PurpleBallAssets(purleBallTexture);
         yellowBallAssets = new YellowBallAssets(yellowBallTexture);
         tileAssets       = new TileAssets(tileTexture);
+        skinAssets       = new SkinAssets(mySkin);
 //        crosshairAssets = new CrosshairAssets(crossTexture);
     }
 
@@ -144,6 +154,41 @@ public class Assets implements Disposable, AssetErrorListener {
         }
 
     }
+
+    public class SkinAssets {
+
+        public Skin skin;
+
+        public SkinAssets(Skin skin) {
+            BitmapFont font = generateHudFont();
+            this.skin = skin;
+
+            skin.add("newFont", font, BitmapFont.class);
+
+//            skin.
+        }
+
+        private BitmapFont generateHudFont() {
+            BitmapFont font;
+            FreeTypeFontGenerator generator =
+                    new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+            FreeTypeFontGenerator.FreeTypeFontParameter parameter =
+                    new FreeTypeFontGenerator.FreeTypeFontParameter();
+//            parameter.size = (int)(height - (height*(1-Constants.HUD_UP_SIZE)
+//                    + Constants.HUD_MARGIN_UP_RATIO*height) );
+            parameter.size = 18;
+            parameter.borderColor = Color.BLACK;
+            parameter.borderWidth = 2;
+            parameter.shadowOffsetX = 3;
+            parameter.shadowOffsetY = -3;
+            parameter.shadowColor = Color.BLACK;
+
+            font = generator.generateFont(parameter);
+            return font;
+        }
+    }
+
+
 
 
 }

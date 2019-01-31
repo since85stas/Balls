@@ -46,7 +46,8 @@ public class AchivementsList {
         for (int i = 0; i < achivements.length; i++) {
             switch (achivements[i].getType()) {
                 case ConstantsAchiveEng.TYPE_SCORE:
-                    if (game.getGameScreen().gameField.getGameScore() > achivements[i].getCrit())  {
+                    int score = game.getGameScreen().gameField.getGameScore();
+                    if (score > achivements[i].getCrit())  {
                         achivements[i].setComplete(1);
                         achivementComplete = true;
                     }
@@ -58,7 +59,7 @@ public class AchivementsList {
                     }
                     break;
                 case  ConstantsAchiveEng.TYPE_TIME_OVERALL:
-                    if (game.getGameScreen().gameField.gameTime > achivements[i].getCrit())  {
+                    if (game.getGameScreen().gameField.gameTimeFullOld > achivements[i].getCrit())  {
                         achivements[i].setComplete(1);
                         achivementComplete = true;
                     }
@@ -73,6 +74,14 @@ public class AchivementsList {
         int[] array = new int[achivements.length];
         for (int i = 0; i < achivements.length; i++) {
             array[i] = achivements[i].isComplete();
+        }
+        return array;
+    }
+
+    public String[] getAchievDescrArray() {
+        String[] array = new String[achivements.length];
+        for (int i = 0; i < achivements.length; i++) {
+            array[i] = achivements[i].getDescription();
         }
         return array;
     }

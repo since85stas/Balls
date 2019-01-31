@@ -59,6 +59,7 @@ public class GameField {
 
     // массив с ячейками
     private SquareItem[][] squares;
+    private int[][] ballColors ;
 
     private Background background;
 
@@ -67,6 +68,7 @@ public class GameField {
     private float ballMoveY;
 
     public float gameTime;
+    public float gameTimeFullOld;
     private float ballMoveTime;
     private int ballMoveNumber = 1;
 
@@ -93,9 +95,20 @@ public class GameField {
             }
         }
 
+        if (gameScreen.lineGame.findSaveGame) {
+            loadPrefer();
+            for (int i = 0; i < fieldDimension ; i++) {
+                for (int j = 0; j < fieldDimension ; j++) {
+                    if(ballColors[i][j] > 0) {
+                        squares[i][j].setHasBall(true);
+                        squares[i][j].setBallColor(ballColors[i][j]);
+//                        squares[i][j].
+                    }
+                }
+            }
+        }
+
         nextTurnBallCells = new Vector2[numberOfAiBalls];
-        numberOfTurns = 0;
-        gameScore = 0;
         aiTurn();
 
         // определяем эффекты
@@ -108,7 +121,9 @@ public class GameField {
     }
 
     private void savePrefer() {
+
         gamePref = Gdx.app.getPreferences(Constants.PREF_GAME);
+        gamePref.putBoolean(Constants.PREF_GAME_IS_PLAY,true);
         gamePref.putFloat(Constants.PREF_TIME_PLAYED,gameTime);
         gamePref.putFloat(Constants.PREF_SCORE,gameScore);
         gamePref.putFloat(Constants.PREF_TURNS,numberOfTurns);
@@ -129,30 +144,28 @@ public class GameField {
     }
 
     private void loadPrefer() {
-        int[][] deserializedInts;
         gamePref = Gdx.app.getPreferences(Constants.PREF_GAME);
-        gamePref.getFloat(Constants.PREF_TIME_PLAYED,gameTime);
-        gamePref.getFloat(Constants.PREF_SCORE,gameScore);
-        gamePref.getFloat(Constants.PREF_TURNS,numberOfTurns);
+        gameTimeFullOld = gamePref.getFloat(Constants.PREF_TIME_PLAYED_FULL,0);
+        gameTime = gamePref.getFloat(Constants.PREF_TIME_PLAYED);
+        gameScore =(int) gamePref.getFloat(Constants.PREF_SCORE);
+        numberOfTurns = (int)gamePref.getFloat(Constants.PREF_TURNS);
         Json json = new Json();
         String serializedInts = gamePref.getString(Constants.PREF_GAME_MASSIVE);
         try {
-            deserializedInts = json.fromJson(int[][].class, serializedInts); //you need to pass the class type - be aware of it!
+            ballColors = json.fromJson(int[][].class, serializedInts); //you need to pass the class type - be aware of it!
         } catch (Exception e) {
             Gdx.app.log(TAG,"exception getiing field" , e);
         }
-
     }
 
     private void deleteBalls(Vector2[] balls) {
 
         for (int i = 0; i < balls.length; i++) {
-            squares[(int) balls[i].x][(int) balls[i].y].setHasBall(false);
-            squares[(int) balls[i].x][(int) balls[i].y].setBallInCenter();
-            squares[(int) balls[i].x][(int) balls[i].y].setActive(false);
+
             float x = squares[(int)balls[i].x][(int)balls[i].y].getCenterPosition().x;
             float y = squares[(int)balls[i].x][(int)balls[i].y].getCenterPosition().y;
             spawnParticleEffect((int)x,(int)y);
+            returnSquareInitState(balls[i],true);
         }
     }
 
@@ -209,6 +222,7 @@ public class GameField {
                     gameScore += check.getNumberBallsInLine() * Constants.SCORED_PER_BALL;
                 }
                 aiTurn();
+                checkAchieve();
                 check = new CheckBallLines(squares, numberOfColors);
                 hasLine = check.startCheck();
                 if (hasLine && check.getBallsInLine() != null) {
@@ -358,6 +372,10 @@ public class GameField {
         return gameScore;
     }
 
+    public float getGameTime() {
+        return gameTime;
+    }
+
     public Vector2 checkClickEvent(int screenX, int screenY) {
         Vector2 clickPosition = null;
         for (int i = 0; i < fieldDimension; i++) {
@@ -389,15 +407,21 @@ public class GameField {
         if (numberOfTurns == 0) {
             getNextTurnBalls();
         }
-        if (numberOfTurns != 0 ) {
-            savePrefer();
-            loadPrefer();
-            gameScreen.lineGame.achivementsList.checkAchivements();
-        }
-
         putBall();
         getNextTurnBalls();
         numberOfTurns++;
+    }
+
+    public void checkAchieve() {
+        if (numberOfTurns != 0 ) {
+            savePrefer();
+//            loadPrefer();
+            boolean achive = gameScreen.lineGame.achivementsList.checkAchivements();
+            if(achive) {
+                gameScreen.lineGame.saveAchieve();
+                gameScreen.lineGame.loadAchieve();
+            }
+        }
     }
 
     private void putBall() {
@@ -468,5 +492,11 @@ public class GameField {
                         .setHasBall(true);
             }
         }
+    }
+
+    public void dispose() {
+
+        gamePref.putFloat(Constants.PREF_TIME_PLAYED_FULL,gameTime + gameTimeFullOld);
+        gamePref.flush();
     }
 }

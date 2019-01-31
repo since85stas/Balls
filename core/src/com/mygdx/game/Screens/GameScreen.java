@@ -21,7 +21,7 @@ public class GameScreen implements Screen {
     private float accumulator = 0;
     private float gametime ;
 
-    public LinesGame lineGame;
+    public LinesGame lineGame  ;
     private  SpriteBatch batch ;
     public GameField gameField ;
 
@@ -39,10 +39,6 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
-	    // создаем текстуры
-        AssetManager am = new AssetManager();
-        Assets.instance.init(am);
-
 	    gameField = new GameField(this);
 
         // Initialize the HUD viewport
@@ -50,9 +46,10 @@ public class GameScreen implements Screen {
 
         //  Initialize the BitmapFont
         font = new BitmapFont();
-
+        font = Assets.instance.skinAssets.skin.getFont("newFont");
+        font.getData().setScale(0.01f,0.01f);
         //  Give the font a linear TextureFilter
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
+//        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
     }
 
     @Override
@@ -80,7 +77,7 @@ public class GameScreen implements Screen {
 
         // Draw the number of player deaths in the top left
         font.setColor(Color.CYAN);
-        gametime +=delta;
+        gametime = gameField.getGameTime();
 
         font.draw(batch, "Score: " + gameField.getGameScore() + "  Time: " + String.format("%f",gametime),
                 Constants.HUD_MARGIN, Gdx.graphics.getWidth() + Constants.HUD_MARGIN);
@@ -100,6 +97,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		gameField.dispose();
 		//img.dispose();
 	}
 

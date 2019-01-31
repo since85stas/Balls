@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.LinesGame;
+import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
 
 /**
@@ -36,7 +37,7 @@ public class MainMenuScreen extends InputAdapter implements Screen{
     private static final String[] buttonNames = {
             "continue",
             "new game",
-            "achievment",
+            "achievements",
             "exit"
     };
 
@@ -60,8 +61,17 @@ public class MainMenuScreen extends InputAdapter implements Screen{
         batch = new SpriteBatch();
         widtht = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
-        mySkin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
+//        mySkin = new Skin(Gdx.files.internal("skin/craftacular-ui.json"));
+        mySkin = Assets.instance.skinAssets.skin;
+//        mySkin.
         generateButtons();
+        Gdx.input.setInputProcessor(stage);
+//        BitmapFont font = generateHudFont();
+//        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
+//        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+//        parameter.size = 12;
+//        BitmapFont font12 = generator.generateFont(parameter); // font size 12 pixels
+//        generator.dispose(); // don't forget to dispose to avoid memory leaks!
 //        hudFont = generateHudFont();
     }
 
@@ -111,72 +121,75 @@ public class MainMenuScreen extends InputAdapter implements Screen{
     }
 
     private void generateButtons() {
-        Button[] buttons = new Button[numButtons];
+        TextButton[] buttons = new TextButton[numButtons];
 
         float buttonX = (widtht - widtht*BUTTONS_WIDTH)/2;
         float buttonY = height - height*BUTTONS_UPPER_OFFSET;
+
+//        TextButton.TextButtonStyle style = mySkin.get
 
         for (int i = 0; i < buttons.length; i++) {
             buttonY -= height*BUTTONS_HEIGHT + height*BUTTONS_BETWEEN_SPACE;
 
             buttons[i] = new TextButton(buttonNames[i],mySkin);
-            if(i==0) {
-                buttons[i].setDisabled(true);
+            TextButton.TextButtonStyle style = buttons[i].getStyle();
+            style.font = mySkin.getFont("newFont");
+            buttons[i] = new TextButton(buttonNames[i],style);
+            if(!mGame.findSaveGame) {
+                buttons[0].setDisabled(true);
             }
             buttons[i].setSize(widtht*BUTTONS_WIDTH,height*BUTTONS_HEIGHT);
+
             buttons[i].setPosition(buttonX,buttonY);
 
+            int finalI = i;
             buttons[i].addListener(new InputListener(){
                 @Override
                 public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-//                outputLabel.setText("Pressed Text Button");
                     Gdx.app.log("PreScreen","Pressed");
-                    Actor act = event.getListenerActor();
-//                    InputEvent ev = event.getListenerActor();
+                    switch (finalI){
+                        case 0:
+                            mGame.setGameScreen();
+                            break;
+                        case 1:
+                            mGame.findSaveGame = false;
+                            mGame.setGameScreen();
+                            break;
+                        case 2:
+                            mGame.setAchieveScreen();
+                            break;
+                        case 3:
+                            break;
+                    }
 
                     return true;
                 }
             });
             stage.addActor(buttons[i]);
         }
-
-
-//        buttonY -= 2*height*0.1;
-//        Button startButton = new TextButton("Start",mySkin);
-//        startButton.setSize(50.f,30.f);
-//        startButton.setPosition(buttonX,buttonY);
-//
-//        startButton.addListener(new InputListener(){
-//            @Override
-//            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-////                outputLabel.setText("Pressed Text Button");
-//                Gdx.app.log("PreScreen","Pressed");
-//                mGame.setGameScreen();
-//                return true;
-//            }
-//        });
-//        Gdx.input.setInputProcessor(stage);
-////            Actor actor = new Actor();
-////            actor.setName(soundBase.getGameSounds()[i].getName());
-////            actor.
-//        stage.addActor(startButton);
-
     }
 
 //    private BitmapFont generateHudFont() {
-//        BitmapFont font;
+//        BitmapFont font = new BitmapFont();
 //        FreeTypeFontGenerator generator =
 //                new FreeTypeFontGenerator(Gdx.files.internal("zorque.ttf"));
 //        FreeTypeFontGenerator.FreeTypeFontParameter parameter =
 //                new FreeTypeFontGenerator.FreeTypeFontParameter();
-//        parameter.size = 40;
-//        parameter.borderColor = Color.BLACK;
-//        parameter.borderWidth = 2;
-//        parameter.shadowOffsetX = 3;
-//        parameter.shadowOffsetY = -3;
-//        parameter.shadowColor = Color.BLACK;
+////            parameter.size = (int)(height - (height*(1-Constants.HUD_UP_SIZE)
+////                    + Constants.HUD_MARGIN_UP_RATIO*height) );
+////        parameter.size = 20;
+////        parameter.borderColor = Color.BLACK;
+////        parameter.borderWidth = 2;
+////        parameter.shadowOffsetX = 3;
+////        parameter.shadowOffsetY = -3;
+////        parameter.shadowColor = Color.BLACK;
+//
 //        font = generator.generateFont(parameter);
 //        return font;
 //    }
+
+    private void buttonPressed(int button) {
+
+    }
 
 }

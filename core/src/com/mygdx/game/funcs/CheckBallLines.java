@@ -104,7 +104,8 @@ public class CheckBallLines {
         int count = 0;
         int cycleValue = SIZE_WIN;
         for (int i = 0, j = 0; j < cycleValue; i--, j++) {
-            if ((fieldg[v + i][h + j] == dot)) {
+            try {
+                if ((fieldg[v + i][h + j] == dot)) {
                     count++;
 
                     if (count >= SIZE_WIN) {
@@ -116,11 +117,14 @@ public class CheckBallLines {
                         }
 
                         //проверка на большее чем SIZE_WIN количество шариков
-                        if ( (i + v != SIZE_Y - 1)&& (j + h != SIZE_Y - 1)){
+                        if ((i + v != SIZE_Y - 1) && (j + h != SIZE_Y - 1) &&(i + v != 0) &&(j + h !=0) ) {
                             cycleValue++;
                         }
                     }
                 }
+            } catch (Exception e) {
+                Gdx.app.log(TAG,"Excep", e);
+            }
             }
         return count;
     }

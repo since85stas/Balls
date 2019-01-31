@@ -37,6 +37,7 @@ public class Constants {
     public static final String PREF_ACHIEV = "preference_achieve";
     public static final String PREF_GAME = "preference_game"     ;
     public static final String PREF_TIME_PLAYED = "time_played"  ;
+    public static final String PREF_TIME_PLAYED_FULL = "time_full"  ;
     public static final String PREF_ACHIEV_MASSIVE = "achievements";
     public static final String PREF_GAME_IS_PLAY   = "game_is_play";
     public static final String PREF_GAME_MASSIVE   = "game_massive";
