@@ -65,7 +65,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: font
+		font: big-font
 	}
 	dim: {
 		font: font
@@ -76,7 +76,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		background: underline
 	}
 	title: {
-		font: title
+		font: huge-font
+	}
+	small: {
+		font: small-font
 	}
 	xp: {
 		font: bold
@@ -129,8 +132,20 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	small: {
+		font: small-font
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
 	default: {
-		font: font
+		font: big-font
+		up: button
+		over: button-hover
+		disabled: button-disabled
+	}
+	huge: {
+		font: huge-font
 		up: button
 		over: button-hover
 		disabled: button-disabled

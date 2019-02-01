@@ -7,6 +7,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.GameField;
 import com.mygdx.game.LinesGame;
@@ -20,6 +25,9 @@ public class GameScreen implements Screen {
 
     private float accumulator = 0;
     private float gametime ;
+    private Stage stage;
+
+//    private Skin mySkin;
 
     public LinesGame lineGame  ;
     private  SpriteBatch batch ;
@@ -29,7 +37,6 @@ public class GameScreen implements Screen {
     ScreenViewport hudViewport;
 
     // Add BitmapFont
-    BitmapFont font;
 
 	public  GameScreen (LinesGame lineGame,SpriteBatch batch){
 		this.lineGame = lineGame;
@@ -38,18 +45,16 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        stage = new Stage();
 
 	    gameField = new GameField(this);
 
         // Initialize the HUD viewport
         hudViewport = new ScreenViewport();
 
-        //  Initialize the BitmapFont
-        font = new BitmapFont();
-        font = Assets.instance.skinAssets.skin.getFont("newFont");
-        font.getData().setScale(0.01f,0.01f);
-        //  Give the font a linear TextureFilter
-//        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
+        Container cont = new Container(itemHudLable("title",10));
+        cont.setPosition(50,400);
+        stage.addActor(cont);
     }
 
     @Override
@@ -76,21 +81,35 @@ public class GameScreen implements Screen {
         gameField.render(batch, delta);
 
         // Draw the number of player deaths in the top left
-        font.setColor(Color.CYAN);
+//        font.setColor(Color.CYAN);
         gametime = gameField.getGameTime();
 
-        font.draw(batch, "Score: " + gameField.getGameScore() + "  Time: " + String.format("%f",gametime),
-                Constants.HUD_MARGIN, Gdx.graphics.getWidth() + Constants.HUD_MARGIN);
+//        font.draw(batch, "Score: " + gameField.getGameScore() + "  Time: " + String.format("%f",gametime),
+//                Constants.HUD_MARGIN, Gdx.graphics.getWidth() + Constants.HUD_MARGIN);
 
         if (frameTime % 0.5 == 0) {
             float fps = 1 / delta;
             Gdx.app.log(TAG, "fps =" + fps);
         }
         batch.end();
+
+        stage.draw();
+    }
+
+    private VerticalGroup itemHudLable(String title, int digit ) {
+
+	    Skin skin = Assets.instance.skinAssets.skin;
+
+        Label titleLable =  new Label(title,skin,"small");
+        Label digitLable = new Label(Integer.toString(digit),skin,"title");
+
+        VerticalGroup group = new VerticalGroup().pad(100);
+        group.addActor(titleLable);
+        group.addActor(digitLable);
+	    return group;
     }
 
     public void update (float dt) {
-
 
     }
 	
@@ -124,6 +143,6 @@ public class GameScreen implements Screen {
         hudViewport.update(width, height, true);
 
         // Set font scale to min(width, height) / reference screen size
-        font.getData().setScale(Math.min(width, height) / Constants.HUD_FONT_REFERENCE_SCREEN_SIZE);
+//        font.getData().setScale(Math.min(width, height) / Constants.HUD_FONT_REFERENCE_SCREEN_SIZE);
     }
 }

@@ -25,7 +25,7 @@ public class AchieveScreen implements Screen {
     ScreenViewport hudViewport;
 
     // Add BitmapFont
-    BitmapFont font;
+//    BitmapFont font;
 
     private Skin mySkin;
     private Table container;
@@ -39,28 +39,12 @@ public class AchieveScreen implements Screen {
     public void show() {
         mySkin = Assets.instance.skinAssets.skin;
 
-        font = Assets.instance.skinAssets.skin.getFont("font");
-        font.getData().setScale(0.01f,0.01f);
-
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
         PagedScrollPane scroll = new PagedScrollPane();
         scroll.setFlingTime(0.1f);
         scroll.setPageSpacing(25);
-
-//        int c = 1;
-//        for (int l = 0; l < 10; l++) {
-//            Table levels = new Table().pad(50);
-//            levels.defaults().pad(20, 40, 20, 40);
-//            for (int y = 0; y < 3; y++) {
-//                levels.row();
-//                for (int x = 0; x < 4; x++) {
-//                    levels.add(getLevelButton(c++)).expand().fill();
-//                }
-//            }
-//            scroll.addPage(levels);
-//        }
 
         String[] achievsDescr = lineGame.achivementsList.getAchievDescrArray();
         Button[] acievmentsItems = new Button[achievsDescr.length];

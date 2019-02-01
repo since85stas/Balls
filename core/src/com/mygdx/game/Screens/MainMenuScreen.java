@@ -131,10 +131,10 @@ public class MainMenuScreen extends InputAdapter implements Screen{
         for (int i = 0; i < buttons.length; i++) {
             buttonY -= height*BUTTONS_HEIGHT + height*BUTTONS_BETWEEN_SPACE;
 
-            buttons[i] = new TextButton(buttonNames[i],mySkin);
-            TextButton.TextButtonStyle style = buttons[i].getStyle();
-            style.font = mySkin.getFont("newFont");
-            buttons[i] = new TextButton(buttonNames[i],style);
+            buttons[i] = new TextButton(buttonNames[i],mySkin,"default");
+//            TextButton.TextButtonStyle style = buttons[i].getStyle();
+//            style.font = mySkin.getFont("newFont");
+//            buttons[i] = new TextButton(buttonNames[i],style);
             if(!mGame.findSaveGame) {
                 buttons[0].setDisabled(true);
             }
