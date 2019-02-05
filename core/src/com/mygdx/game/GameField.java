@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.mygdx.game.Screens.GameScreen;
 import com.mygdx.game.funcs.CheckBallLines;
 import com.mygdx.game.funcs.FindBallPath;
+import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ public class GameField {
 
     // game parameters
     private int fieldDimension   = 9;
-    private int numberOfAiBalls  = 2;
+    private int numberOfAiBalls  = 3;
     public  int numberOfColors   = 4;
     private int numberOfTurns;
     private int gameScore;
@@ -53,6 +55,8 @@ public class GameField {
     // turnParameters
     private boolean isBallSelected = false;
     private boolean isDrawBallPath = false;
+    private boolean achieveUnlock  = false;
+    private boolean drawNewAchievment = false;
     private Vector2 selectedBall;
     private Vector2 transportPosition;
     private Vector2[] nextTurnBallCells;
@@ -60,6 +64,7 @@ public class GameField {
     // массив с ячейками
     private SquareItem[][] squares;
     private int[][] ballColors ;
+    Vector2 initPos;
 
     private Background background;
 
@@ -70,6 +75,7 @@ public class GameField {
     public float gameTime;
     public float gameTimeFullOld;
     private float ballMoveTime;
+    private float achiveDrawTime;
     private int ballMoveNumber = 1;
 
     public GameField(GameScreen gameScreen) {
@@ -83,13 +89,17 @@ public class GameField {
 
         itemWidth = (int) (screenWidth / fieldDimension);
 
-        background = new Background(new Vector2(0,0),screenWidth,screnHeight,fieldDimension);
+        initPos = new Vector2(0,screnHeight  - screenWidth - gameScreen.lableItemHeight);
+        background = new Background( initPos,
+                screenWidth,
+                screnHeight,
+                fieldDimension);
 
         squares = new SquareItem[fieldDimension][fieldDimension];
         for (int i = 0; i < fieldDimension; i++) {
             for (int j = 0; j < fieldDimension; j++) {
-                int x = j * itemWidth;
-                int y = i * itemWidth;
+                int x = (int)initPos.x + j * itemWidth;
+                int y = (int)initPos.y + i * itemWidth;
                 Vector2 position = new Vector2(x, y);
                 squares[j][i] = new SquareItem(gameScreen, itemWidth, itemWidth, position);
             }
@@ -231,12 +241,31 @@ public class GameField {
                 }
             }
             Gdx.app.log("Move", "move time=" + ballMoveTime);
-            //float[] floats = vector2ArrayToFloatArray(centers);
-//            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//            shapeRenderer.polyline(floats);
-//            Polyline lines = new Polyline(floats);
-//            lines.
-//            shapeRenderer.end();
+        }
+
+        BitmapFont achieveFont = Assets.instance.skinAssets.skin.getFont("small-font");
+
+        if (drawNewAchievment) {
+            achiveDrawTime += dt;
+            if (achiveDrawTime > Constants.ACHIEVE_DRAW_TIME ) {
+                drawNewAchievment = false;
+                achiveDrawTime = 0;
+            }
+            achieveFont.draw(batch,
+                    "new achievement",
+                    Gdx.graphics.getWidth()/2,
+                    initPos.y - Constants.HUD_OFFSET*Gdx.graphics.getHeight());
+
+            int starSize = 40;
+            batch.draw(Assets.instance.starAssets.texture,
+                    Gdx.graphics.getWidth()/2 - starSize*1.2f,
+                    initPos.y - Constants.HUD_OFFSET*Gdx.graphics.getHeight() - starSize/2 ,
+                    starSize + 5*MathUtils.sin(gameTime),
+                    starSize + 5*MathUtils.sin(gameTime)
+                            );
+
+//            batch.draw()
+
         }
 
     }
@@ -416,12 +445,18 @@ public class GameField {
         if (numberOfTurns != 0 ) {
             savePrefer();
 //            loadPrefer();
-            boolean achive = gameScreen.lineGame.achivementsList.checkAchivements();
-            if(achive) {
+            achieveUnlock = gameScreen.lineGame.achivementsList.checkAchivements();
+            if(achieveUnlock) {
+                drawNewAchievment = true;
                 gameScreen.lineGame.saveAchieve();
                 gameScreen.lineGame.loadAchieve();
+                achievmentUnlocked();
             }
         }
+    }
+
+    private void  achievmentUnlocked() {
+
     }
 
     private void putBall() {

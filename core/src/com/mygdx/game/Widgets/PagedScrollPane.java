@@ -2,6 +2,7 @@ package com.mygdx.game.Widgets;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -37,7 +38,7 @@ public class PagedScrollPane extends ScrollPane {
 
     private void setup() {
         content = new Table();
-        content.defaults().space(50);
+        content.defaults().space(20);
         super.setWidget(content);
     }
 
@@ -72,12 +73,12 @@ public class PagedScrollPane extends ScrollPane {
     @Override
     public void setWidth (float width) {
         super.setWidth(width);
-//        if (content != null) {
-//            for (Cell cell : content.getCells()) {
-//                cell.width(width);
-//            }
-//            content.invalidate();
-//        }
+        if (content != null) {
+            for (Cell cell : content.getCells()) {
+                cell.width(width);
+            }
+            content.invalidate();
+        }
     }
 
     public void setPageSpacing (float pageSpacing) {

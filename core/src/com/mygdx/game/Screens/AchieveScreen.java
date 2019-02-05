@@ -21,8 +21,11 @@ public class AchieveScreen implements Screen {
     private SpriteBatch batch ;
     private Stage stage;
 
+    private int width;
+    private int height;
+
     // Add ScreenViewport for HUD
-    ScreenViewport hudViewport;
+    ScreenViewport hudViewport = new ScreenViewport();
 
     // Add BitmapFont
 //    BitmapFont font;
@@ -39,48 +42,74 @@ public class AchieveScreen implements Screen {
     public void show() {
         mySkin = Assets.instance.skinAssets.skin;
 
-        stage = new Stage(new ScreenViewport());
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
+
+        hudViewport = new ScreenViewport();
+
+        stage = new Stage();
+        stage.setViewport(hudViewport);
         Gdx.input.setInputProcessor(stage);
 
         PagedScrollPane scroll = new PagedScrollPane();
-        scroll.setFlingTime(0.1f);
-        scroll.setPageSpacing(25);
+//        ScrollPane commonScroll = new ScrollPane()
+//        scroll.setFlingTime(0.1f);
+//        scroll.setPageSpacing(25);
 
         String[] achievsDescr = lineGame.achivementsList.getAchievDescrArray();
         Button[] acievmentsItems = new Button[achievsDescr.length];
+        int[]    achievementComp = lineGame.achivementsList.getAchievCompArray();
 
-        Table achievments = new Table().pad(100);
+        Table achievments = new Table().pad(20);
 
         for (int i = 0; i < achievsDescr.length; i++) {
-            acievmentsItems[i] = createAchieveItem(achievsDescr[i],i);
+            acievmentsItems[i] = createAchieveItem(achievsDescr[i],i,achievementComp[i]);
             achievments.add(acievmentsItems[i]);
             achievments.row();
         }
 
         scroll.addPage(achievments);
+        ScrollPane commonScroll = new ScrollPane(achievments,mySkin);
+        commonScroll.setPosition(0,0);
+        commonScroll.setFillParent(true);
+//        commonScroll.scr
 
-        container = new Table();
-        stage.addActor(container);
-        container.setFillParent(true);
-        container.add(scroll).expand().fill();
+//        achievments.setFillParent(true);
+        achievments.align(Align.left);
+        achievments.pad(20);
+//        achievments.
+
+        stage.addActor(commonScroll);
+
+//        container = new Table();
+//        stage.addActor(container);
+//        container.setFillParent(true);
+//        container.add(scroll).expand().fill();
     }
 
-    public Button createAchieveItem(String descr, int number) {
-        Button button = new Button(mySkin);
-        Button.ButtonStyle style = button.getStyle();
-        style.up = 	style.down = null;
+    public Button createAchieveItem(String descr, int number, int isComplete) {
+        Button button = new Button(mySkin,"default");
 
-        // Create the label to show the level number
-        Label label = new Label(descr, mySkin);
-        label.setFontScale(2f);
-        label.setAlignment(Align.center);
+        //
+        Label label = new Label(descr, mySkin,"small");
+//        label.setSize(width*0.5f,100);
+        label.setWrap(true);
+        label.setAlignment(Align.left);
 
         // create image
-        Image image = new Image(Assets.instance.blueBallAssets.texture);
+        Image image;
+        if (isComplete == 1) {
+            image = new Image(Assets.instance.starAssets.texture);
+        }  else if (isComplete == 0) {
+            image = new Image(Assets.instance.lockAssets.texture);
+        } else {
+            image = new Image(Assets.instance.lockAssets.texture);
+        }
+
+        image.setAlign(Align.left);
 
         Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
+//        table.setFillParent(true);
 
         table.add(image);
         table.add(label);
@@ -88,6 +117,12 @@ public class AchieveScreen implements Screen {
         button.add(table);
 
         button.setName("item " + number);
+        button.align(Align.left);
+        if (isComplete == 0) {
+            button.setDisabled(true);
+        }
+//        button.setDisabled(true);
+//        button.setSize(width*0.5f,100);
 //        button.addListener(levelClickListener);
         return button;
     }
@@ -102,6 +137,10 @@ public class AchieveScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        // Update HUD viewport
+        hudViewport.update(width, height, true);
 
     }
 

@@ -53,7 +53,8 @@ public class AchivementsList {
                     }
                     break;
                 case  ConstantsAchiveEng.TYPE_TIME_SINGLE:
-                    if (game.getGameScreen().gameField.gameTime > achivements[i].getCrit())  {
+                    if (game.getGameScreen().gameField.gameTime > achivements[i].getCrit() &&
+                            achivements[i].isComplete() != 1 )  {
                         achivements[i].setComplete(1);
                         achivementComplete = true;
                     }
@@ -84,6 +85,10 @@ public class AchivementsList {
             array[i] = achivements[i].getDescription();
         }
         return array;
+    }
+
+    public  Achivement[] getAchivements() {
+        return achivements;
     }
 
 }

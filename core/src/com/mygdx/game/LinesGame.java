@@ -43,6 +43,7 @@ public class LinesGame extends Game {
         // создаем достижения
         achivementsList = new AchivementsList(this);
         achivementsList.generateAchivemnets();
+//        dropAcievmComplete();
         loadAchieve();
 
         setScreen(new MainMenuScreen(this));
@@ -92,7 +93,27 @@ public class LinesGame extends Game {
         Json json = new Json();
         String serializedInts = prefs.getString(Constants.PREF_ACHIEV_MASSIVE);
         int[] deserializedInts = json.fromJson(int[].class, serializedInts); //you need to pass the class type - be aware of it!
+        for (int i = 0; i < achivementsList.getAchievCompArray().length; i++) {
 
+            if(deserializedInts[i] == 1) {
+                achivementsList.getAchivements()[i].setComplete(1);
+            }
+        }
+    }
+
+    public void dropAcievmComplete() {
+        Preferences prefs = Gdx.app.getPreferences(Constants.PREF_ACHIEV);
+
+        Hashtable<String, String> hashTable = new Hashtable<String, String>();
+        Json json = new Json();
+        int[] array = new int[achivementsList.getAchievCompArray().length];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = 0;
+        }
+        hashTable.put(Constants.PREF_ACHIEV_MASSIVE, json.toJson(array) ); //here you are serializing the array
+        prefs.put(hashTable);
+
+        prefs.flush();
     }
 
     public Viewport getViewport() {

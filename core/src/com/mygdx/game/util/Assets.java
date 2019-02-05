@@ -43,12 +43,16 @@ public class Assets implements Disposable, AssetErrorListener {
     public GreenBallAssets greenBallAssets;
     public PurpleBallAssets purpleBallAssets;
     public YellowBallAssets yellowBallAssets;
+    public StarAssets starAssets;
     public TileAssets tileAssets;
     public SkinAssets skinAssets;
+    public LockAssets lockAssets;
 
     public void init(AssetManager assetManager) {
         this.assetManager = assetManager;
         assetManager.setErrorListener(this);
+        assetManager.load("mini_star.png", Texture.class);
+        assetManager.load("mini_lock01.png", Texture.class);
         assetManager.load("sphere_blue.png", Texture.class);
         assetManager.load("sphere_green.png",Texture.class);
         assetManager.load("sphere_purle.png",Texture.class);
@@ -74,6 +78,8 @@ public class Assets implements Disposable, AssetErrorListener {
 
         assetManager.finishLoading();
 
+        Texture starTexture    = assetManager.get  ("mini_star.png");
+        Texture lockTexture    = assetManager.get("mini_lock01.png");
         Texture blueBallTexture = assetManager.get  ("sphere_blue.png");
         Texture greenBallTexture = assetManager.get ("sphere_green.png");
         Texture purleBallTexture = assetManager.get ("sphere_purle.png");
@@ -81,12 +87,14 @@ public class Assets implements Disposable, AssetErrorListener {
         Texture tileTexture = assetManager.get("mini_brown_rock.png");
         Skin mySkin = assetManager.get("skin/craftacular-ui.json");
 //        enemyAssets = new EnemyAssets(walkTexture);
+        starAssets       = new StarAssets(starTexture);
         blueBallAssets   = new BlueBallAssets(blueBallTexture);
         greenBallAssets  = new GreenBallAssets(greenBallTexture);
         purpleBallAssets = new PurpleBallAssets(purleBallTexture);
         yellowBallAssets = new YellowBallAssets(yellowBallTexture);
         tileAssets       = new TileAssets(tileTexture);
         skinAssets       = new SkinAssets(mySkin);
+        lockAssets      = new LockAssets(lockTexture);
 //        crosshairAssets = new CrosshairAssets(crossTexture);
 
 
@@ -157,6 +165,28 @@ public class Assets implements Disposable, AssetErrorListener {
 
             Gdx.app.log(TAG,"animation load");
         }
+    }
+
+    public class StarAssets {
+
+        public Texture texture;
+
+        public StarAssets(Texture texture) {
+            this.texture = texture;
+            Gdx.app.log(TAG,"animation load");
+        }
+
+    }
+
+    public class LockAssets {
+
+        public Texture texture;
+
+        public LockAssets(Texture texture) {
+            this.texture = texture;
+            Gdx.app.log(TAG,"animation load");
+        }
+
     }
 
     public class BlueBallAssets {
