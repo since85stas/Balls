@@ -15,6 +15,7 @@ import com.mygdx.game.Screens.MainMenuScreen;
 import com.mygdx.game.results.AchivementsList;
 import com.mygdx.game.util.Assets;
 import com.mygdx.game.util.Constants;
+import com.mygdx.game.util.ConstantsAchiveEng;
 
 import java.util.Hashtable;
 
@@ -107,7 +108,7 @@ public class LinesGame extends Game {
         Hashtable<String, String> hashTable = new Hashtable<String, String>();
         Json json = new Json();
         int[] array = new int[achivementsList.getAchievCompArray().length];
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < ConstantsAchiveEng.NUM_ACHIVEMENTS; i++) {
             array[i] = 0;
         }
         hashTable.put(Constants.PREF_ACHIEV_MASSIVE, json.toJson(array) ); //here you are serializing the array

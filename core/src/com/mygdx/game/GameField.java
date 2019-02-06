@@ -51,6 +51,7 @@ public class GameField {
     public  int numberOfColors   = 4;
     private int numberOfTurns;
     private int gameScore;
+    private int gameScoreFullOld;
 
     // turnParameters
     private boolean isBallSelected = false;
@@ -77,12 +78,13 @@ public class GameField {
     private float ballMoveTime;
     private float achiveDrawTime;
     private int ballMoveNumber = 1;
+    private int lineLong;
 
     public GameField(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
         shapeRenderer = new ShapeRenderer();
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(67, 99, 135, 0.5f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         int screenWidth = Gdx.graphics.getWidth();
         int screnHeight = Gdx.graphics.getHeight();
@@ -123,7 +125,7 @@ public class GameField {
 
         // определяем эффекты
         ParticleEffect touchEffect = new ParticleEffect();
-        touchEffect.load(Gdx.files.internal ("fire2.p"), Gdx.files.internal("") );
+        touchEffect.load(Gdx.files.internal ("fire3.p"), Gdx.files.internal("") );
         touchEffect.setEmittersCleanUpBlendFunction(true);
         touchEffectPool = new ParticleEffectPool(touchEffect, 5, 7);
         spawnParticleEffect(-300,-100);
@@ -156,6 +158,7 @@ public class GameField {
     private void loadPrefer() {
         gamePref = Gdx.app.getPreferences(Constants.PREF_GAME);
         gameTimeFullOld = gamePref.getFloat(Constants.PREF_TIME_PLAYED_FULL,0);
+        gameTimeFullOld = gamePref.getFloat(Constants.PREF_SCORE_FULL,0);
         gameTime = gamePref.getFloat(Constants.PREF_TIME_PLAYED);
         gameScore =(int) gamePref.getFloat(Constants.PREF_SCORE);
         numberOfTurns = (int)gamePref.getFloat(Constants.PREF_TURNS);
@@ -180,7 +183,7 @@ public class GameField {
     }
 
     public void render(SpriteBatch batch, float dt) {
-
+        Gdx.gl.glClearColor(0.3f, 0.47f, 0.65f, 1);
         update(dt);
 
         long time1 = TimeUtils.millis();
@@ -229,7 +232,8 @@ public class GameField {
                 boolean hasLine = check.startCheck();
                 if (hasLine && check.getBallsInLine() != null) {
                     deleteBalls(check.getBallsInLine());
-                    gameScore += check.getNumberBallsInLine() * Constants.SCORED_PER_BALL;
+                    lineLong = check.getNumberBallsInLine();
+                    gameScore += lineLong * Constants.SCORED_PER_BALL;
                 }
                 aiTurn();
                 checkAchieve();
@@ -347,6 +351,9 @@ public class GameField {
                             transportPosition = clickPosition;
 
                             squares[(int) clickPosition.x][(int) clickPosition.y].setBallColor(color);
+                            if (squares[(int) clickPosition.x][(int) clickPosition.y].isNextTurnBall()) {
+                                addNextTurnBalls();
+                            }
                             isBallSelected = false;
                             selectedBall = null;
                         }
@@ -482,6 +489,16 @@ public class GameField {
         }
     }
 
+    private void addNextTurnBalls() {
+                    Vector2[] freeSquares = checkSquares();
+            int random = MathUtils.random(0, freeSquares.length - 1);
+
+            squares[(int) freeSquares[random].x][(int) freeSquares[random].y]
+                    .setBallColor(MathUtils.random(0, numberOfColors - 1));
+            squares[(int) freeSquares[random].x][(int) freeSquares[random].y]
+                    .setNextTurnBall(true);
+    }
+
     /*
         Игрок по щелчку выбирает шарик с которым взаимодействовать
      */
@@ -530,8 +547,20 @@ public class GameField {
     }
 
     public void dispose() {
-
         gamePref.putFloat(Constants.PREF_TIME_PLAYED_FULL,gameTime + gameTimeFullOld);
+        gamePref.putFloat(Constants.PREF_SCORE_FULL,gameScore + gameScoreFullOld);
         gamePref.flush();
+    }
+
+    public int getGameScoreFullOld() {
+        return gameScoreFullOld;
+    }
+
+    public int getNumberOfTurns() {
+        return numberOfTurns;
+    }
+
+    public int getLineLong() {
+        return lineLong;
     }
 }

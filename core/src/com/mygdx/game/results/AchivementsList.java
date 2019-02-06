@@ -23,6 +23,13 @@ public class AchivementsList {
 
         achivements = new Achivement[ConstantsAchiveEng.NUM_ACHIVEMENTS];
 
+        int a1 = ConstantsAchiveEng.achievmentsName.length;
+        int a2 = ConstantsAchiveEng.achievementsDescr.length;
+        int a3 = ConstantsAchiveEng.achivementsCost.length;
+        int a4 = ConstantsAchiveEng.achivementsType.length;
+        int a5 = ConstantsAchiveEng.achivementsCriteria.length;
+
+//        if ( a1 == a2 == a3 == a4 == a5  )
         for (int i = 0; i < achivements.length ; i++) {
             try {
                 achivements[i] = new Achivement(
@@ -47,7 +54,8 @@ public class AchivementsList {
             switch (achivements[i].getType()) {
                 case ConstantsAchiveEng.TYPE_SCORE:
                     int score = game.getGameScreen().gameField.getGameScore();
-                    if (score > achivements[i].getCrit())  {
+                    if (score > achivements[i].getCrit() &&
+                            achivements[i].isComplete() != 1)  {
                         achivements[i].setComplete(1);
                         achivementComplete = true;
                     }
@@ -60,7 +68,30 @@ public class AchivementsList {
                     }
                     break;
                 case  ConstantsAchiveEng.TYPE_TIME_OVERALL:
-                    if (game.getGameScreen().gameField.gameTimeFullOld > achivements[i].getCrit())  {
+                    if (game.getGameScreen().gameField.gameTimeFullOld > achivements[i].getCrit() &&
+                            achivements[i].isComplete() != 1)  {
+                        achivements[i].setComplete(1);
+                        achivementComplete = true;
+                    }
+                    break;
+                case ConstantsAchiveEng.TYPE_SCORE_OVERALL:
+                    int scoreFull = game.getGameScreen().gameField.getGameScoreFullOld();
+                    if (scoreFull > achivements[i].getCrit() &&
+                            achivements[i].isComplete() != 1)  {
+                        achivements[i].setComplete(1);
+                        achivementComplete = true;
+                    }
+                    break;
+                case  ConstantsAchiveEng.TYPE_TURNS:
+                    if (game.getGameScreen().gameField.getNumberOfTurns() > achivements[i].getCrit() &&
+                            achivements[i].isComplete() != 1)  {
+                        achivements[i].setComplete(1);
+                        achivementComplete = true;
+                    }
+                    break;
+                case  ConstantsAchiveEng.TYPE_LINES_SIZE:
+                    if (game.getGameScreen().gameField.getLineLong() > achivements[i].getCrit() &&
+                            achivements[i].isComplete() != 1)  {
                         achivements[i].setComplete(1);
                         achivementComplete = true;
                     }

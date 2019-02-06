@@ -58,7 +58,7 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager.load("sphere_purle.png",Texture.class);
         assetManager.load("sphere_yellow.png",Texture.class);
         assetManager.load("green_rock.png"   ,Texture.class);
-        assetManager.load("mini_brown_rock.png",Texture.class);
+        assetManager.load("green_rock_crop.png",Texture.class);
 //        assetManager.load("skin/craftacular-ui.json",Skin.class);
 
 
@@ -84,7 +84,7 @@ public class Assets implements Disposable, AssetErrorListener {
         Texture greenBallTexture = assetManager.get ("sphere_green.png");
         Texture purleBallTexture = assetManager.get ("sphere_purle.png");
         Texture yellowBallTexture = assetManager.get("sphere_yellow.png");
-        Texture tileTexture = assetManager.get("mini_brown_rock.png");
+        Texture tileTexture = assetManager.get("green_rock_crop.png");
         Skin mySkin = assetManager.get("skin/craftacular-ui.json");
 //        enemyAssets = new EnemyAssets(walkTexture);
         starAssets       = new StarAssets(starTexture);
@@ -112,6 +112,8 @@ public class Assets implements Disposable, AssetErrorListener {
 //        param.size = Math.round( ppi / 2);
         param.size = 32;
         fontsByName.put( "huge-font", generator.generateFont( param ));
+        param.size = 42;
+        fontsByName.put( "menu-font", generator.generateFont( param ));
 //        param.size = Math.round( ppi / 3);
         param.size = 22;
         fontsByName.put( "big-font", generator.generateFont( param ));

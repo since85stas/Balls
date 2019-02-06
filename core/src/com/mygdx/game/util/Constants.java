@@ -41,11 +41,12 @@ public class Constants {
     public static final String PREF_GAME_IS_PLAY   = "game_is_play";
     public static final String PREF_GAME_MASSIVE   = "game_massive";
     public static final String PREF_SCORE   = "game_score";
+    public static final String PREF_SCORE_FULL   = "game_score";
     public static final String PREF_TURNS   = "game_turns";
 
     // константы для размеров гаме HUD
     public static final float HUD_OFFSET = 0.05f;
     public static final float HUD_ITEM_VERT_SIZE = 0.1f;
-    public static final float HUD_ITEM_HOR_SIZE = 0.1f;
+    public static final float HUD_ITEM_HOR_SIZE = 0.3f;
 
 }

@@ -2,6 +2,7 @@ package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,22 +18,21 @@ import java.util.Date;
 
 public class GameScreen implements Screen {
 
+    //
     private static final String TAG = GameScreen.class.getName();
 
+    //
     private float accumulator = 0;
     private float gametime ;
     private Stage stage;
 
-//    private Skin mySkin;
-
+    //
     public LinesGame lineGame  ;
     private  SpriteBatch batch ;
     public GameField gameField ;
 
     // Add ScreenViewport for HUD
     ScreenViewport hudViewport;
-
-    // Add BitmapFont
 
     private int width;
     private int height;
@@ -75,6 +75,8 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        Gdx.gl.glClearColor(0.3f, 0.47f, 0.6f, 0.8f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // fixed time step
         // max frame time to avoid spiral of death (on slow devices)
@@ -111,10 +113,28 @@ public class GameScreen implements Screen {
         } else if ( time > 60 && time < 3600) {
             int min = (int) (time / 60);
             int sec = time%60;
-            timeString = "0" + Integer.toString(min) + ":" + Integer.toString(sec);
+            if (sec > 9) {
+                timeString = "0" + Integer.toString(min) + ":" + Integer.toString(sec);
+            }  else {
+                timeString = "0" + Integer.toString(min) + ":0" + Integer.toString(sec);
+            }
         }
         timeLable.setText(timeString);
-        scoreLable.setText((int)gameField.getGameScore());
+        int score = gameField.getGameScore();
+        String scoreString = "";
+
+        if (score < 10) {
+            scoreString = "0000" +  Integer.toString(score)   ;
+        } else if (score>=10 && score < 100) {
+            scoreString = "000" +  Integer.toString(score)    ;
+        } else if (score>=100 && score < 1000) {
+            scoreString = "00" +  Integer.toString(score)     ;
+        } else if (score>=1000 && score < 10000) {
+            scoreString = "0" +  Integer.toString(score)      ;
+        } else if (score>=10000 && score < 100000) {
+            scoreString = "" +  Integer.toString(score)       ;
+        }
+        scoreLable.setText(scoreString );
         batch.end();
 
         stage.draw();
@@ -174,7 +194,6 @@ public class GameScreen implements Screen {
     public void resume() {
 
     }
-
 
     @Override
     public void resize(int width, int height) {
